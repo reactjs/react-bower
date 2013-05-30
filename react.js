@@ -1,5 +1,5 @@
 /**
- * React v0.3.0
+ * React v0.3.1
  */
 (function(e){if("function"==typeof bootstrap)bootstrap("react",e);else if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define(e);else if("undefined"!=typeof ses){if(!ses.ok())return;ses.makeReact=e}else"undefined"!=typeof window?window.React=e():global.React=e()})(function(){var define,ses,bootstrap,module,exports;
 return (function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
@@ -2990,7 +2990,7 @@ mixInto(ReactNativeComponent, ReactMultiChild.Mixin);
 
 module.exports = ReactNativeComponent;
 
-},{"./DOMPropertyOperations":34,"./CSSPropertyOperations":32,"./ReactComponent":3,"./ReactEvent":20,"./ReactMultiChild":41,"./escapeTextForBrowser":42,"./flattenChildren":43,"./invariant":10,"./merge":12,"./keyOf":44,"./mixInto":13}],18:[function(require,module,exports){
+},{"./CSSPropertyOperations":32,"./DOMPropertyOperations":34,"./ReactComponent":3,"./ReactEvent":20,"./ReactMultiChild":41,"./escapeTextForBrowser":42,"./flattenChildren":43,"./invariant":10,"./keyOf":44,"./merge":12,"./mixInto":13}],18:[function(require,module,exports){
 /**
  * Copyright 2013 Facebook, Inc.
  *
@@ -3360,7 +3360,7 @@ var ReactEvent = {
 
 module.exports = ReactEvent;
 
-},{"./BrowserEnv":46,"./EventConstants":47,"./EventPluginHub":27,"./ExecutionEnvironment":14,"./invariant":10,"./NormalizedEventListener":48,"./isEventSupported":49}],21:[function(require,module,exports){
+},{"./BrowserEnv":46,"./EventConstants":47,"./EventPluginHub":27,"./ExecutionEnvironment":14,"./NormalizedEventListener":48,"./invariant":10,"./isEventSupported":49}],21:[function(require,module,exports){
 /**
  * Copyright 2013 Facebook, Inc.
  *
@@ -3688,7 +3688,7 @@ var ReactInstanceHandles = {
 
 module.exports = ReactInstanceHandles;
 
-},{"./invariant":10,"./getDOMNodeID":50}],22:[function(require,module,exports){
+},{"./getDOMNodeID":50,"./invariant":10}],22:[function(require,module,exports){
 (function(){/**
  * Copyright 2013 Facebook, Inc.
  *
@@ -4341,7 +4341,7 @@ if (ExecutionEnvironment.canUseDOM) {
 module.exports = EventPluginHub;
 
 })()
-},{"./AbstractEvent":53,"./CallbackRegistry":54,"./EventPluginUtils":55,"./EventPropagators":52,"./ExecutionEnvironment":14,"./accumulate":56,"./forEachAccumulated":57,"./keyMirror":11,"./throwIf":31,"./merge":12}],28:[function(require,module,exports){
+},{"./AbstractEvent":53,"./CallbackRegistry":54,"./EventPluginUtils":55,"./EventPropagators":52,"./ExecutionEnvironment":14,"./accumulate":56,"./forEachAccumulated":57,"./keyMirror":11,"./merge":12,"./throwIf":31}],28:[function(require,module,exports){
 /**
  * Copyright 2013 Facebook, Inc.
  *
@@ -6073,69 +6073,6 @@ var Transaction = {
 module.exports = Transaction;
 
 })()
-},{"./throwIf":31}],42:[function(require,module,exports){
-/**
- * Copyright 2013 Facebook, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @providesModule escapeTextForBrowser
- */
-
-"use strict";
-
-var throwIf = require("./throwIf");
-
-var ESCAPE_TYPE_ERR;
-
-if (true) {
-  ESCAPE_TYPE_ERR =
-    'The React core has attempted to escape content that is of a ' +
-    'mysterious type (object etc) Escaping only works on numbers and strings';
-}
-
-var ESCAPE_LOOKUP = {
-  "&": "&amp;",
-  ">": "&gt;",
-  "<": "&lt;",
-  "\"": "&quot;",
-  "'": "&#x27;",
-  "/": "&#x2f;"
-};
-
-function escaper(match) {
-  return ESCAPE_LOOKUP[match];
-}
-
-var escapeTextForBrowser = function (text) {
-  var type = typeof text;
-  var invalid = type === 'object';
-  if (true) {
-    throwIf(invalid, ESCAPE_TYPE_ERR);
-  }
-  if (text === '' || invalid) {
-    return '';
-  } else {
-    if (type === 'string') {
-      return text.replace(/[&><"'\/]/g, escaper);
-    } else {
-      return (''+text).replace(/[&><"'\/]/g, escaper);
-    }
-  }
-};
-
-module.exports = escapeTextForBrowser;
-
 },{"./throwIf":31}],41:[function(require,module,exports){
 (function(){/**
  * Copyright 2013 Facebook, Inc.
@@ -6347,7 +6284,70 @@ var ReactMultiChild = {
 module.exports = ReactMultiChild;
 
 })()
-},{"./ReactComponent":3}],43:[function(require,module,exports){
+},{"./ReactComponent":3}],42:[function(require,module,exports){
+/**
+ * Copyright 2013 Facebook, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @providesModule escapeTextForBrowser
+ */
+
+"use strict";
+
+var throwIf = require("./throwIf");
+
+var ESCAPE_TYPE_ERR;
+
+if (true) {
+  ESCAPE_TYPE_ERR =
+    'The React core has attempted to escape content that is of a ' +
+    'mysterious type (object etc) Escaping only works on numbers and strings';
+}
+
+var ESCAPE_LOOKUP = {
+  "&": "&amp;",
+  ">": "&gt;",
+  "<": "&lt;",
+  "\"": "&quot;",
+  "'": "&#x27;",
+  "/": "&#x2f;"
+};
+
+function escaper(match) {
+  return ESCAPE_LOOKUP[match];
+}
+
+var escapeTextForBrowser = function (text) {
+  var type = typeof text;
+  var invalid = type === 'object';
+  if (true) {
+    throwIf(invalid, ESCAPE_TYPE_ERR);
+  }
+  if (text === '' || invalid) {
+    return '';
+  } else {
+    if (type === 'string') {
+      return text.replace(/[&><"'\/]/g, escaper);
+    } else {
+      return (''+text).replace(/[&><"'\/]/g, escaper);
+    }
+  }
+};
+
+module.exports = escapeTextForBrowser;
+
+},{"./throwIf":31}],43:[function(require,module,exports){
 /**
  * Copyright 2013 Facebook, Inc.
  *
@@ -7001,7 +7001,285 @@ var EventPropagators = {
 
 module.exports = EventPropagators;
 
-},{"./CallbackRegistry":54,"./EventConstants":47,"./accumulate":56,"./forEachAccumulated":57}],55:[function(require,module,exports){
+},{"./CallbackRegistry":54,"./EventConstants":47,"./accumulate":56,"./forEachAccumulated":57}],53:[function(require,module,exports){
+/**
+ * Copyright 2013 Facebook, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @providesModule AbstractEvent
+ */
+
+"use strict";
+
+var BrowserEnv = require("./BrowserEnv");
+var PooledClass = require("./PooledClass");
+var TouchEventUtils = require("./TouchEventUtils");
+
+var throwIf = require("./throwIf");
+
+
+// Only accessed in __DEV__
+var CLONE_TYPE_ERR;
+if (true) {
+  CLONE_TYPE_ERR =
+    'You may only clone instances of AbstractEvent for ' +
+    'persistent references. Check yourself.';
+}
+var MAX_POOL_SIZE = 20;
+
+/**
+ * AbstractEvent copy constructor. @see `PooledClass`. Provides a single place
+ * to define all cross browser normalization of DOM events. Does not attempt to
+ * extend a native event, rather creates a completely new object that has a
+ * reference to the nativeEvent through .nativeEvent member. The property .data
+ * should hold all data that is extracted from the event in a cross browser
+ * manner. Application code should use the data field when possible, not the
+ * unreliable native event.
+ */
+function AbstractEvent(
+    abstractEventType,
+    abstractTargetID,  // Allows the abstract target to differ from native.
+    originatingTopLevelEventType,
+    nativeEvent,
+    data) {
+  this.type = abstractEventType;
+  this.abstractTargetID = abstractTargetID || '';
+  this.originatingTopLevelEventType = originatingTopLevelEventType;
+  this.nativeEvent = nativeEvent;
+  this.data = data;
+  // TODO: Deprecate storing target - doesn't always make sense for some types
+  this.target = nativeEvent && nativeEvent.target;
+
+  /**
+   * As a performance optimization, we tag the existing event with the listeners
+   * (or listener [singular] if only one). This avoids having to package up an
+   * abstract event along with the set of listeners into a wrapping "dispatch"
+   * object. No one should ever read this property except event system and
+   * plugin/dispatcher code. We also tag the abstract event with a parallel
+   * ID array. _dispatchListeners[i] is being dispatched to a DOM node at ID
+   * _dispatchIDs[i]. The lengths should never, ever, ever be different.
+   */
+  this._dispatchListeners = null;
+  this._dispatchIDs = null;
+
+  this.isPropagationStopped = false;
+}
+
+/** `PooledClass` looks for this. */
+AbstractEvent.poolSize = MAX_POOL_SIZE;
+
+/**
+ * `PooledClass` looks for `destructor` on each instance it releases. We need to
+ * ensure that we remove all references to listeners which could trap large
+ * amounts of memory in their closures.
+ */
+AbstractEvent.prototype.destructor = function() {
+  this.target = null;
+  this._dispatchListeners = null;
+  this._dispatchIDs = null;
+};
+
+/**
+ * Enhance the `AbstractEvent` class to have pooling abilities. We instruct
+ * `PooledClass` that our copy constructor accepts five arguments (this is just
+ * a performance optimization). These objects are instantiated frequently.
+ */
+PooledClass.addPoolingTo(AbstractEvent, PooledClass.fiveArgumentPooler);
+
+AbstractEvent.prototype.stopPropagation = function() {
+  this.isPropagationStopped = true;
+  if (this.nativeEvent.stopPropagation) {
+    this.nativeEvent.stopPropagation();
+  }
+  // IE8 only understands cancelBubble, not stopPropagation().
+  this.nativeEvent.cancelBubble = true;
+};
+
+AbstractEvent.prototype.preventDefault = function() {
+  AbstractEvent.preventDefaultOnNativeEvent(this.nativeEvent);
+};
+
+/**
+ * Utility function for preventing default in cross browser manner.
+ */
+AbstractEvent.preventDefaultOnNativeEvent = function(nativeEvent) {
+  if (nativeEvent.preventDefault) {
+    nativeEvent.preventDefault();
+  } else {
+    nativeEvent.returnValue = false;
+  }
+};
+
+/**
+ * @param {Element} target The target element.
+ */
+AbstractEvent.normalizeScrollDataFromTarget = function(target) {
+  return {
+    scrollTop: target.scrollTop,
+    scrollLeft: target.scrollLeft,
+    clientWidth: target.clientWidth,
+    clientHeight: target.clientHeight,
+    scrollHeight: target.scrollHeight,
+    scrollWidth: target.scrollWidth
+  };
+};
+
+/*
+ * There are some normalizations that need to happen for various browsers. In
+ * addition to replacing the general event fixing with a framework such as
+ * jquery, we need to normalize mouse events here. Code below is mostly borrowed
+ * from: jScrollPane/script/jquery.mousewheel.js
+ */
+AbstractEvent.normalizeMouseWheelData = function(nativeEvent) {
+  var delta = 0;
+  var deltaX = 0;
+  var deltaY = 0;
+
+  /* traditional scroll wheel data */
+  if ( nativeEvent.wheelDelta ) { delta = nativeEvent.wheelDelta/120; }
+  if ( nativeEvent.detail     ) { delta = -nativeEvent.detail/3; }
+
+  /* Multidimensional scroll (touchpads) with deltas */
+  deltaY = delta;
+
+  /* Gecko based browsers */
+  if (nativeEvent.axis !== undefined &&
+      nativeEvent.axis === nativeEvent.HORIZONTAL_AXIS ) {
+    deltaY = 0;
+    deltaX = -delta;
+  }
+
+  /* Webkit based browsers */
+  if (nativeEvent.wheelDeltaY !== undefined ) {
+    deltaY = nativeEvent.wheelDeltaY/120;
+  }
+  if (nativeEvent.wheelDeltaX !== undefined ) {
+    deltaX = -nativeEvent.wheelDeltaX/120;
+  }
+
+  return { delta: delta, deltaX: deltaX, deltaY: deltaY };
+};
+
+/**
+ * I <3 Quirksmode.org:
+ * http://www.quirksmode.org/js/events_properties.html
+ */
+AbstractEvent.isNativeClickEventRightClick = function(nativeEvent) {
+  return nativeEvent.which ? nativeEvent.which === 3 :
+    nativeEvent.button ? nativeEvent.button === 2 :
+    false;
+};
+
+AbstractEvent.normalizePointerData = function(nativeEvent) {
+  return {
+    globalX: AbstractEvent.eventPageX(nativeEvent),
+    globalY: AbstractEvent.eventPageY(nativeEvent),
+    rightMouseButton:
+      AbstractEvent.isNativeClickEventRightClick(nativeEvent)
+  };
+};
+
+AbstractEvent.normalizeDragEventData =
+  function(nativeEvent, globalX, globalY, startX, startY) {
+    return {
+      globalX: globalX,
+      globalY: globalY,
+      startX: startX,
+      startY: startY
+    };
+  };
+
+/**
+ * Warning: It is possible to move your finger on a touch surface, yet not
+ * effect the `eventPageX/Y` because the touch had caused a scroll that
+ * compensated for your movement. To track movements across the page, prevent
+ * default to avoid scrolling, and control scrolling in javascript.
+ */
+
+/**
+ * Gets the exact position of a touch/mouse event on the page with respect to
+ * the document body. The only reason why this method is needed instead of using
+ * `TouchEventUtils.extractSingleTouch` is to support IE8-. Mouse events in all
+ * browsers except IE8- contain a pageY. IE8 and below require clientY
+ * computation:
+ *
+ * @param {Event} nativeEvent Native event, possibly touch or mouse.
+ * @return {number} Coordinate with respect to document body.
+ */
+AbstractEvent.eventPageY = function(nativeEvent) {
+  var singleTouch = TouchEventUtils.extractSingleTouch(nativeEvent);
+  if (singleTouch) {
+    return singleTouch.pageY;
+  } else if (typeof nativeEvent.pageY !== 'undefined') {
+    return nativeEvent.pageY;
+  } else {
+    return nativeEvent.clientY + BrowserEnv.currentPageScrollTop;
+  }
+};
+
+/**
+ * @see `AbstractEvent.eventPageY`.
+ *
+ * @param {Event} nativeEvent Native event, possibly touch or mouse.
+ * @return {number} Coordinate with respect to document body.
+ */
+AbstractEvent.eventPageX = function(nativeEvent) {
+  var singleTouch = TouchEventUtils.extractSingleTouch(nativeEvent);
+  if (singleTouch) {
+    return singleTouch.pageX;
+  } else if (typeof nativeEvent.pageX !== 'undefined') {
+    return nativeEvent.pageX;
+  } else {
+    return nativeEvent.clientX + BrowserEnv.currentPageScrollLeft;
+  }
+};
+
+/**
+ * A semantic API around cloning an event for use in another event loop. We
+ * clear out all dispatched `AbstractEvent`s after each event loop, adding them
+ * back into the pool. This allows a way to hold onto a reference that won't be
+ * added back into the pool. Please note that `AbstractEvent.nativeEvent` is
+ * *not* cloned and you will run into problems in IE if you assume that it will
+ * be! The moral of that story is to always normalize any data you need into the
+ * `.data` field. The data field is not cloned either, but there won't be any
+ * issues related to use of `.data` in a future event cycle so long as no part
+ * of your application mutates it. We don't clone the private fields because
+ * your application should never be accessing them.
+ *
+ * - TODO: In __DEV__ when "releasing" events, don't put them back into the
+ *   pool. Instead add ES5 getters on all their fields that throw errors so you
+ *   can detect any application that's hanging onto events and reusing them.
+ *   In prod - we can put them back into the pool for reuse.
+ */
+AbstractEvent.persistentCloneOf = function(abstractEvent) {
+  if (true) {
+    throwIf(!(abstractEvent instanceof AbstractEvent), CLONE_TYPE_ERR);
+  }
+  return new AbstractEvent(
+    abstractEvent.type,
+    abstractEvent.abstractTargetID,
+    abstractEvent.originatingTopLevelEventType,
+    abstractEvent.nativeEvent,
+    abstractEvent.data,
+    abstractEvent.target
+  );
+};
+
+module.exports = AbstractEvent;
+
+
+},{"./BrowserEnv":46,"./PooledClass":37,"./TouchEventUtils":67,"./throwIf":31}],55:[function(require,module,exports){
 /**
  * Copyright 2013 Facebook, Inc.
  *
@@ -7281,285 +7559,7 @@ function accumulate(cur, next) {
 
 module.exports = accumulate;
 
-},{"./throwIf":31}],53:[function(require,module,exports){
-/**
- * Copyright 2013 Facebook, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- * @providesModule AbstractEvent
- */
-
-"use strict";
-
-var BrowserEnv = require("./BrowserEnv");
-var PooledClass = require("./PooledClass");
-var TouchEventUtils = require("./TouchEventUtils");
-
-var throwIf = require("./throwIf");
-
-
-// Only accessed in __DEV__
-var CLONE_TYPE_ERR;
-if (true) {
-  CLONE_TYPE_ERR =
-    'You may only clone instances of AbstractEvent for ' +
-    'persistent references. Check yourself.';
-}
-var MAX_POOL_SIZE = 20;
-
-/**
- * AbstractEvent copy constructor. @see `PooledClass`. Provides a single place
- * to define all cross browser normalization of DOM events. Does not attempt to
- * extend a native event, rather creates a completely new object that has a
- * reference to the nativeEvent through .nativeEvent member. The property .data
- * should hold all data that is extracted from the event in a cross browser
- * manner. Application code should use the data field when possible, not the
- * unreliable native event.
- */
-function AbstractEvent(
-    abstractEventType,
-    abstractTargetID,  // Allows the abstract target to differ from native.
-    originatingTopLevelEventType,
-    nativeEvent,
-    data) {
-  this.type = abstractEventType;
-  this.abstractTargetID = abstractTargetID || '';
-  this.originatingTopLevelEventType = originatingTopLevelEventType;
-  this.nativeEvent = nativeEvent;
-  this.data = data;
-  // TODO: Deprecate storing target - doesn't always make sense for some types
-  this.target = nativeEvent && nativeEvent.target;
-
-  /**
-   * As a performance optimization, we tag the existing event with the listeners
-   * (or listener [singular] if only one). This avoids having to package up an
-   * abstract event along with the set of listeners into a wrapping "dispatch"
-   * object. No one should ever read this property except event system and
-   * plugin/dispatcher code. We also tag the abstract event with a parallel
-   * ID array. _dispatchListeners[i] is being dispatched to a DOM node at ID
-   * _dispatchIDs[i]. The lengths should never, ever, ever be different.
-   */
-  this._dispatchListeners = null;
-  this._dispatchIDs = null;
-
-  this.isPropagationStopped = false;
-}
-
-/** `PooledClass` looks for this. */
-AbstractEvent.poolSize = MAX_POOL_SIZE;
-
-/**
- * `PooledClass` looks for `destructor` on each instance it releases. We need to
- * ensure that we remove all references to listeners which could trap large
- * amounts of memory in their closures.
- */
-AbstractEvent.prototype.destructor = function() {
-  this.target = null;
-  this._dispatchListeners = null;
-  this._dispatchIDs = null;
-};
-
-/**
- * Enhance the `AbstractEvent` class to have pooling abilities. We instruct
- * `PooledClass` that our copy constructor accepts five arguments (this is just
- * a performance optimization). These objects are instantiated frequently.
- */
-PooledClass.addPoolingTo(AbstractEvent, PooledClass.fiveArgumentPooler);
-
-AbstractEvent.prototype.stopPropagation = function() {
-  this.isPropagationStopped = true;
-  if (this.nativeEvent.stopPropagation) {
-    this.nativeEvent.stopPropagation();
-  }
-  // IE8 only understands cancelBubble, not stopPropagation().
-  this.nativeEvent.cancelBubble = true;
-};
-
-AbstractEvent.prototype.preventDefault = function() {
-  AbstractEvent.preventDefaultOnNativeEvent(this.nativeEvent);
-};
-
-/**
- * Utility function for preventing default in cross browser manner.
- */
-AbstractEvent.preventDefaultOnNativeEvent = function(nativeEvent) {
-  if (nativeEvent.preventDefault) {
-    nativeEvent.preventDefault();
-  } else {
-    nativeEvent.returnValue = false;
-  }
-};
-
-/**
- * @param {Element} target The target element.
- */
-AbstractEvent.normalizeScrollDataFromTarget = function(target) {
-  return {
-    scrollTop: target.scrollTop,
-    scrollLeft: target.scrollLeft,
-    clientWidth: target.clientWidth,
-    clientHeight: target.clientHeight,
-    scrollHeight: target.scrollHeight,
-    scrollWidth: target.scrollWidth
-  };
-};
-
-/*
- * There are some normalizations that need to happen for various browsers. In
- * addition to replacing the general event fixing with a framework such as
- * jquery, we need to normalize mouse events here. Code below is mostly borrowed
- * from: jScrollPane/script/jquery.mousewheel.js
- */
-AbstractEvent.normalizeMouseWheelData = function(nativeEvent) {
-  var delta = 0;
-  var deltaX = 0;
-  var deltaY = 0;
-
-  /* traditional scroll wheel data */
-  if ( nativeEvent.wheelDelta ) { delta = nativeEvent.wheelDelta/120; }
-  if ( nativeEvent.detail     ) { delta = -nativeEvent.detail/3; }
-
-  /* Multidimensional scroll (touchpads) with deltas */
-  deltaY = delta;
-
-  /* Gecko based browsers */
-  if (nativeEvent.axis !== undefined &&
-      nativeEvent.axis === nativeEvent.HORIZONTAL_AXIS ) {
-    deltaY = 0;
-    deltaX = -delta;
-  }
-
-  /* Webkit based browsers */
-  if (nativeEvent.wheelDeltaY !== undefined ) {
-    deltaY = nativeEvent.wheelDeltaY/120;
-  }
-  if (nativeEvent.wheelDeltaX !== undefined ) {
-    deltaX = -nativeEvent.wheelDeltaX/120;
-  }
-
-  return { delta: delta, deltaX: deltaX, deltaY: deltaY };
-};
-
-/**
- * I <3 Quirksmode.org:
- * http://www.quirksmode.org/js/events_properties.html
- */
-AbstractEvent.isNativeClickEventRightClick = function(nativeEvent) {
-  return nativeEvent.which ? nativeEvent.which === 3 :
-    nativeEvent.button ? nativeEvent.button === 2 :
-    false;
-};
-
-AbstractEvent.normalizePointerData = function(nativeEvent) {
-  return {
-    globalX: AbstractEvent.eventPageX(nativeEvent),
-    globalY: AbstractEvent.eventPageY(nativeEvent),
-    rightMouseButton:
-      AbstractEvent.isNativeClickEventRightClick(nativeEvent)
-  };
-};
-
-AbstractEvent.normalizeDragEventData =
-  function(nativeEvent, globalX, globalY, startX, startY) {
-    return {
-      globalX: globalX,
-      globalY: globalY,
-      startX: startX,
-      startY: startY
-    };
-  };
-
-/**
- * Warning: It is possible to move your finger on a touch surface, yet not
- * effect the `eventPageX/Y` because the touch had caused a scroll that
- * compensated for your movement. To track movements across the page, prevent
- * default to avoid scrolling, and control scrolling in javascript.
- */
-
-/**
- * Gets the exact position of a touch/mouse event on the page with respect to
- * the document body. The only reason why this method is needed instead of using
- * `TouchEventUtils.extractSingleTouch` is to support IE8-. Mouse events in all
- * browsers except IE8- contain a pageY. IE8 and below require clientY
- * computation:
- *
- * @param {Event} nativeEvent Native event, possibly touch or mouse.
- * @return {number} Coordinate with respect to document body.
- */
-AbstractEvent.eventPageY = function(nativeEvent) {
-  var singleTouch = TouchEventUtils.extractSingleTouch(nativeEvent);
-  if (singleTouch) {
-    return singleTouch.pageY;
-  } else if (typeof nativeEvent.pageY !== 'undefined') {
-    return nativeEvent.pageY;
-  } else {
-    return nativeEvent.clientY + BrowserEnv.currentPageScrollTop;
-  }
-};
-
-/**
- * @see `AbstractEvent.eventPageY`.
- *
- * @param {Event} nativeEvent Native event, possibly touch or mouse.
- * @return {number} Coordinate with respect to document body.
- */
-AbstractEvent.eventPageX = function(nativeEvent) {
-  var singleTouch = TouchEventUtils.extractSingleTouch(nativeEvent);
-  if (singleTouch) {
-    return singleTouch.pageX;
-  } else if (typeof nativeEvent.pageX !== 'undefined') {
-    return nativeEvent.pageX;
-  } else {
-    return nativeEvent.clientX + BrowserEnv.currentPageScrollLeft;
-  }
-};
-
-/**
- * A semantic API around cloning an event for use in another event loop. We
- * clear out all dispatched `AbstractEvent`s after each event loop, adding them
- * back into the pool. This allows a way to hold onto a reference that won't be
- * added back into the pool. Please note that `AbstractEvent.nativeEvent` is
- * *not* cloned and you will run into problems in IE if you assume that it will
- * be! The moral of that story is to always normalize any data you need into the
- * `.data` field. The data field is not cloned either, but there won't be any
- * issues related to use of `.data` in a future event cycle so long as no part
- * of your application mutates it. We don't clone the private fields because
- * your application should never be accessing them.
- *
- * - TODO: In __DEV__ when "releasing" events, don't put them back into the
- *   pool. Instead add ES5 getters on all their fields that throw errors so you
- *   can detect any application that's hanging onto events and reusing them.
- *   In prod - we can put them back into the pool for reuse.
- */
-AbstractEvent.persistentCloneOf = function(abstractEvent) {
-  if (true) {
-    throwIf(!(abstractEvent instanceof AbstractEvent), CLONE_TYPE_ERR);
-  }
-  return new AbstractEvent(
-    abstractEvent.type,
-    abstractEvent.abstractTargetID,
-    abstractEvent.originatingTopLevelEventType,
-    abstractEvent.nativeEvent,
-    abstractEvent.data,
-    abstractEvent.target
-  );
-};
-
-module.exports = AbstractEvent;
-
-
-},{"./BrowserEnv":46,"./TouchEventUtils":67,"./throwIf":31,"./PooledClass":37}],58:[function(require,module,exports){
+},{"./throwIf":31}],58:[function(require,module,exports){
 /**
  * Copyright 2013 Facebook, Inc.
  *
@@ -8408,7 +8408,7 @@ mixInto(ReactTextComponent, {
 
 module.exports = ReactTextComponent;
 
-},{"./ReactComponent":3,"./escapeTextForBrowser":42,"./mixInto":13}],68:[function(require,module,exports){
+},{"./escapeTextForBrowser":42,"./ReactComponent":3,"./mixInto":13}],68:[function(require,module,exports){
 /**
  * Copyright 2013 Facebook, Inc.
  *
