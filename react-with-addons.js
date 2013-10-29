@@ -1,5 +1,5 @@
 /**
- * React (with addons) v0.5.0
+ * React (with addons) v0.5.1
  */
 !function(e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):"undefined"!=typeof window?window.React=e():"undefined"!=typeof global?global.React=e():"undefined"!=typeof self&&(self.React=e())}(function(){var define,module,exports;
 return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
@@ -1725,7 +1725,7 @@ var Danger = {
 
     invariant(
       resultList.length === markupList.length,
-      'Danger: Expected markup to render %d nodes, but rendered %d.',
+      'Danger: Expected markup to render %s nodes, but rendered %s.',
       markupList.length,
       resultList.length
     );
@@ -1823,7 +1823,7 @@ var DefaultDOMPropertyConfig = {
     data: null, // For `<object />` acts as `src`.
     dateTime: MUST_USE_ATTRIBUTE,
     dir: null,
-    disabled: MUST_USE_PROPERTY | HAS_BOOLEAN_VALUE,
+    disabled: MUST_USE_ATTRIBUTE | HAS_BOOLEAN_VALUE,
     draggable: null,
     encType: null,
     form: MUST_USE_ATTRIBUTE,
@@ -3456,7 +3456,7 @@ var React = {
 
 // Version exists only in the open-source version of React, not in Facebook's
 // internal version.
-React.version = '0.5.0';
+React.version = '0.5.1';
 
 module.exports = React;
 
@@ -9020,6 +9020,10 @@ var ReactMount = {
   unmountComponentFromNode: function(instance, container) {
     instance.unmountComponent();
 
+    if (container.nodeType === DOC_NODE_TYPE) {
+      container = container.documentElement;
+    }
+
     // http://jsperf.com/emptying-a-node
     while (container.lastChild) {
       container.removeChild(container.lastChild);
@@ -9181,6 +9185,8 @@ var ReactMount = {
    */
 
   ATTR_NAME: ATTR_NAME,
+
+  getReactRootID: getReactRootID,
 
   getID: getID,
 
@@ -10769,9 +10775,10 @@ function detectEvents() {
   var testEl = document.createElement('div');
   var style = testEl.style;
   for (var baseEventName in EVENT_NAME_MAP) {
-    for (var styleName in baseEventName) {
+    var baseEvents = EVENT_NAME_MAP[baseEventName];
+    for (var styleName in baseEvents) {
       if (styleName in style) {
-        endEvents.push(EVENT_NAME_MAP[styleName]);
+        endEvents.push(baseEvents[styleName]);
         break;
       }
     }
@@ -11418,6 +11425,7 @@ var EventConstants = require("./EventConstants");
 var EventPluginHub = require("./EventPluginHub");
 var EventPropagators = require("./EventPropagators");
 var ExecutionEnvironment = require("./ExecutionEnvironment");
+var ReactInputSelection = require("./ReactInputSelection");
 var SyntheticEvent = require("./SyntheticEvent");
 
 var getActiveElement = require("./getActiveElement");
@@ -11461,7 +11469,8 @@ var mouseDown = false;
  * @param {object}
  */
 function getSelection(node) {
-  if ('selectionStart' in node) {
+  if ('selectionStart' in node &&
+      ReactInputSelection.hasSelectionCapabilities(node)) {
     return {
       start: node.selectionStart,
       end: node.selectionEnd
@@ -11576,14 +11585,12 @@ var SelectEventPlugin = {
           activeElement = topLevelTarget;
           activeElementID = topLevelTargetID;
           lastSelection = null;
-          mouseDown = false;
         }
         break;
       case topLevelTypes.topBlur:
         activeElement = null;
         activeElementID = null;
         lastSelection = null;
-        mouseDown = false;
         break;
 
       // Don't fire the event while the user is dragging. This matches the
@@ -11614,7 +11621,7 @@ var SelectEventPlugin = {
 
 module.exports = SelectEventPlugin;
 
-},{"./EventConstants":15,"./EventPluginHub":17,"./EventPropagators":20,"./ExecutionEnvironment":21,"./SyntheticEvent":75,"./getActiveElement":99,"./isEventSupported":107,"./isTextInputElement":109,"./keyOf":113,"./shallowEqual":124}],72:[function(require,module,exports){
+},{"./EventConstants":15,"./EventPluginHub":17,"./EventPropagators":20,"./ExecutionEnvironment":21,"./ReactInputSelection":49,"./SyntheticEvent":75,"./getActiveElement":99,"./isEventSupported":107,"./isTextInputElement":109,"./keyOf":113,"./shallowEqual":124}],72:[function(require,module,exports){
 /**
  * Copyright 2013 Facebook, Inc.
  *
@@ -14043,12 +14050,23 @@ module.exports = getNodeForCharacterOffset;
 
 "use strict";
 
+var DOC_NODE_TYPE = 9;
+
 /**
- * @param {DOMElement} container DOM element that may contain a React component
+ * @param {DOMElement|DOMDocument} container DOM element that may contain
+ *                                           a React component
  * @return {?*} DOM element that may have the reactRoot ID, or null.
  */
 function getReactRootElementInContainer(container) {
-  return container && container.firstChild;
+  if (!container) {
+    return null;
+  }
+
+  if (container.nodeType === DOC_NODE_TYPE) {
+    return container.documentElement;
+  } else {
+    return container.firstChild;
+  }
 }
 
 module.exports = getReactRootElementInContainer;

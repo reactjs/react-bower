@@ -1,5 +1,5 @@
 /**
- * React v0.5.0
+ * React v0.5.1
  */
 !function(e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):"undefined"!=typeof window?window.React=e():"undefined"!=typeof global?global.React=e():"undefined"!=typeof self&&(self.React=e())}(function(){var define,module,exports;
 return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
@@ -1609,7 +1609,7 @@ var Danger = {
 
     invariant(
       resultList.length === markupList.length,
-      'Danger: Expected markup to render %d nodes, but rendered %d.',
+      'Danger: Expected markup to render %s nodes, but rendered %s.',
       markupList.length,
       resultList.length
     );
@@ -1707,7 +1707,7 @@ var DefaultDOMPropertyConfig = {
     data: null, // For `<object />` acts as `src`.
     dateTime: MUST_USE_ATTRIBUTE,
     dir: null,
-    disabled: MUST_USE_PROPERTY | HAS_BOOLEAN_VALUE,
+    disabled: MUST_USE_ATTRIBUTE | HAS_BOOLEAN_VALUE,
     draggable: null,
     encType: null,
     form: MUST_USE_ATTRIBUTE,
@@ -3292,7 +3292,7 @@ var React = {
 
 // Version exists only in the open-source version of React, not in Facebook's
 // internal version.
-React.version = '0.5.0';
+React.version = '0.5.1';
 
 module.exports = React;
 
@@ -8666,6 +8666,10 @@ var ReactMount = {
   unmountComponentFromNode: function(instance, container) {
     instance.unmountComponent();
 
+    if (container.nodeType === DOC_NODE_TYPE) {
+      container = container.documentElement;
+    }
+
     // http://jsperf.com/emptying-a-node
     while (container.lastChild) {
       container.removeChild(container.lastChild);
@@ -8827,6 +8831,8 @@ var ReactMount = {
    */
 
   ATTR_NAME: ATTR_NAME,
+
+  getReactRootID: getReactRootID,
 
   getID: getID,
 
@@ -10427,6 +10433,7 @@ var EventConstants = require("./EventConstants");
 var EventPluginHub = require("./EventPluginHub");
 var EventPropagators = require("./EventPropagators");
 var ExecutionEnvironment = require("./ExecutionEnvironment");
+var ReactInputSelection = require("./ReactInputSelection");
 var SyntheticEvent = require("./SyntheticEvent");
 
 var getActiveElement = require("./getActiveElement");
@@ -10470,7 +10477,8 @@ var mouseDown = false;
  * @param {object}
  */
 function getSelection(node) {
-  if ('selectionStart' in node) {
+  if ('selectionStart' in node &&
+      ReactInputSelection.hasSelectionCapabilities(node)) {
     return {
       start: node.selectionStart,
       end: node.selectionEnd
@@ -10585,14 +10593,12 @@ var SelectEventPlugin = {
           activeElement = topLevelTarget;
           activeElementID = topLevelTargetID;
           lastSelection = null;
-          mouseDown = false;
         }
         break;
       case topLevelTypes.topBlur:
         activeElement = null;
         activeElementID = null;
         lastSelection = null;
-        mouseDown = false;
         break;
 
       // Don't fire the event while the user is dragging. This matches the
@@ -10623,7 +10629,7 @@ var SelectEventPlugin = {
 
 module.exports = SelectEventPlugin;
 
-},{"./EventConstants":14,"./EventPluginHub":16,"./EventPropagators":19,"./ExecutionEnvironment":20,"./SyntheticEvent":65,"./getActiveElement":88,"./isEventSupported":96,"./isTextInputElement":98,"./keyOf":102,"./shallowEqual":113}],62:[function(require,module,exports){
+},{"./EventConstants":14,"./EventPluginHub":16,"./EventPropagators":19,"./ExecutionEnvironment":20,"./ReactInputSelection":46,"./SyntheticEvent":65,"./getActiveElement":88,"./isEventSupported":96,"./isTextInputElement":98,"./keyOf":102,"./shallowEqual":113}],62:[function(require,module,exports){
 /**
  * Copyright 2013 Facebook, Inc.
  *
@@ -13006,12 +13012,23 @@ module.exports = getNodeForCharacterOffset;
 
 "use strict";
 
+var DOC_NODE_TYPE = 9;
+
 /**
- * @param {DOMElement} container DOM element that may contain a React component
+ * @param {DOMElement|DOMDocument} container DOM element that may contain
+ *                                           a React component
  * @return {?*} DOM element that may have the reactRoot ID, or null.
  */
 function getReactRootElementInContainer(container) {
-  return container && container.firstChild;
+  if (!container) {
+    return null;
+  }
+
+  if (container.nodeType === DOC_NODE_TYPE) {
+    return container.documentElement;
+  } else {
+    return container.firstChild;
+  }
 }
 
 module.exports = getReactRootElementInContainer;
