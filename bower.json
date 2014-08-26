@@ -2,4 +2,5 @@
   "name": "react",
   "version": "0.11.1",
   "main": "react.js"
+  "ignore": []
 }
