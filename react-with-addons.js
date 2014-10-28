@@ -1,5 +1,5 @@
 /**
- * React (with addons) v0.12.0-rc1
+ * React (with addons) v0.12.0
  */
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.React=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /**
@@ -4298,7 +4298,7 @@ var React = {
   renderToString: ReactServerRendering.renderToString,
   renderToStaticMarkup: ReactServerRendering.renderToStaticMarkup,
   unmountComponentAtNode: ReactMount.unmountComponentAtNode,
-  isValidClass: ReactLegacyElement.isValidFactory,
+  isValidClass: ReactLegacyElement.isValidClass,
   isValidElement: ReactElement.isValidElement,
   withContext: ReactContext.withContext,
 
@@ -4400,7 +4400,7 @@ if ("production" !== "development") {
 
 // Version exists only in the open-source version of React, not in Facebook's
 // internal version.
-React.version = '0.12.0-rc1';
+React.version = '0.12.0';
 
 module.exports = React;
 
@@ -9818,7 +9818,7 @@ function defineMutationMembrane(prototype) {
  * @param {*} type
  * @param {string|object} ref
  * @param {*} key
- * @params {*} props
+ * @param {*} props
  * @internal
  */
 var ReactElement = function(type, key, ref, owner, context, props) {
@@ -9853,11 +9853,15 @@ var ReactElement = function(type, key, ref, owner, context, props) {
   this.props = props;
 };
 
+// We intentionally don't expose the function on the constructor property.
+// ReactElement should be indistinguishable from a plain object.
+ReactElement.prototype = {
+  _isReactElement: true
+};
+
 if ("production" !== "development") {
   defineMutationMembrane(ReactElement.prototype);
 }
-
-ReactElement.prototype._isReactElement = true;
 
 ReactElement.createElement = function(type, config, children) {
   var propName;
@@ -9870,7 +9874,16 @@ ReactElement.createElement = function(type, config, children) {
 
   if (config != null) {
     ref = config.ref === undefined ? null : config.ref;
-    key = config.key === undefined ? null : '' + config.key;
+    if ("production" !== "development") {
+      ("production" !== "development" ? warning(
+        config.key !== null,
+        'createElement(...): Encountered component with a `key` of null. In ' +
+        'a future version, this will be treated as equivalent to the string ' +
+        '\'null\'; instead, provide an explicit key or use undefined.'
+      ) : null);
+    }
+    // TODO: Change this back to `config.key === undefined`
+    key = config.key == null ? null : '' + config.key;
     // Remaining properties are added to a new props object
     for (propName in config) {
       if (config.hasOwnProperty(propName) &&
@@ -11156,7 +11169,7 @@ function warnForNonLegacyFactory(type) {
   ("production" !== "development" ? warning(
     false,
     'Do not pass React.DOM.' + type.type + ' to JSX or createFactory. ' +
-    'Use the string "' + type + '" instead.'
+    'Use the string "' + type.type + '" instead.'
   ) : null);
 }
 
@@ -11307,6 +11320,17 @@ ReactLegacyElementFactory.isValidFactory = function(factory) {
   // TODO: This will be removed and moved into a class validator or something.
   return typeof factory === 'function' &&
     factory.isReactLegacyFactory === LEGACY_MARKER;
+};
+
+ReactLegacyElementFactory.isValidClass = function(factory) {
+  if ("production" !== "development") {
+    ("production" !== "development" ? warning(
+      false,
+      'isValidClass is deprecated and will be removed in a future release. ' +
+      'Use a more specific validator instead.'
+    ) : null);
+  }
+  return ReactLegacyElementFactory.isValidFactory(factory);
 };
 
 ReactLegacyElementFactory._isLegacyCallWarningEnabled = true;
