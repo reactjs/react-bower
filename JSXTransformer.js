@@ -1,5 +1,5 @@
 /**
- * JSXTransformer v0.13.0-rc1
+ * JSXTransformer v0.13.0-rc2
  */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.JSXTransformer = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /**
@@ -2314,32 +2314,6 @@ process.umask = function() { return 0; };
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*jslint bitwise:true plusplus:true */
-/*global esprima:true, define:true, exports:true, window: true,
-throwErrorTolerant: true,
-throwError: true, generateStatement: true, peek: true,
-parseAssignmentExpression: true, parseBlock: true,
-parseClassExpression: true, parseClassDeclaration: true, parseExpression: true,
-parseDeclareClass: true, parseDeclareFunction: true,
-parseDeclareModule: true, parseDeclareVariable: true,
-parseForStatement: true,
-parseFunctionDeclaration: true, parseFunctionExpression: true,
-parseFunctionSourceElements: true, parseVariableIdentifier: true,
-parseImportSpecifier: true, parseInterface: true,
-parseLeftHandSideExpression: true, parseParams: true, validateParam: true,
-parseSpreadOrAssignmentExpression: true,
-parseStatement: true, parseSourceElement: true, parseConciseBody: true,
-advanceXJSChild: true, isXJSIdentifierStart: true, isXJSIdentifierPart: true,
-scanXJSStringLiteral: true, scanXJSIdentifier: true,
-parseXJSAttributeValue: true, parseXJSChild: true, parseXJSElement: true, parseXJSExpressionContainer: true, parseXJSEmptyExpression: true,
-parseFunctionTypeParam: true,
-parsePrimaryType: true,
-parseTypeAlias: true,
-parseType: true, parseTypeAnnotatableIdentifier: true, parseTypeAnnotation: true,
-parseTypeParameterDeclaration: true,
-parseYieldExpression: true, parseAwaitExpression: true
-*/
-
 (function (root, factory) {
     'use strict';
 
@@ -2389,8 +2363,8 @@ parseYieldExpression: true, parseAwaitExpression: true
         StringLiteral: 8,
         RegularExpression: 9,
         Template: 10,
-        XJSIdentifier: 11,
-        XJSText: 12
+        JSXIdentifier: 11,
+        JSXText: 12
     };
 
     TokenName = {};
@@ -2402,8 +2376,8 @@ parseYieldExpression: true, parseAwaitExpression: true
     TokenName[Token.NumericLiteral] = 'Numeric';
     TokenName[Token.Punctuator] = 'Punctuator';
     TokenName[Token.StringLiteral] = 'String';
-    TokenName[Token.XJSIdentifier] = 'XJSIdentifier';
-    TokenName[Token.XJSText] = 'XJSText';
+    TokenName[Token.JSXIdentifier] = 'JSXIdentifier';
+    TokenName[Token.JSXText] = 'JSXText';
     TokenName[Token.RegularExpression] = 'RegularExpression';
 
     // A function following one of those tokens is an expression.
@@ -2514,17 +2488,17 @@ parseYieldExpression: true, parseAwaitExpression: true
         VoidTypeAnnotation: 'VoidTypeAnnotation',
         WhileStatement: 'WhileStatement',
         WithStatement: 'WithStatement',
-        XJSIdentifier: 'XJSIdentifier',
-        XJSNamespacedName: 'XJSNamespacedName',
-        XJSMemberExpression: 'XJSMemberExpression',
-        XJSEmptyExpression: 'XJSEmptyExpression',
-        XJSExpressionContainer: 'XJSExpressionContainer',
-        XJSElement: 'XJSElement',
-        XJSClosingElement: 'XJSClosingElement',
-        XJSOpeningElement: 'XJSOpeningElement',
-        XJSAttribute: 'XJSAttribute',
-        XJSSpreadAttribute: 'XJSSpreadAttribute',
-        XJSText: 'XJSText',
+        JSXIdentifier: 'JSXIdentifier',
+        JSXNamespacedName: 'JSXNamespacedName',
+        JSXMemberExpression: 'JSXMemberExpression',
+        JSXEmptyExpression: 'JSXEmptyExpression',
+        JSXExpressionContainer: 'JSXExpressionContainer',
+        JSXElement: 'JSXElement',
+        JSXClosingElement: 'JSXClosingElement',
+        JSXOpeningElement: 'JSXOpeningElement',
+        JSXAttribute: 'JSXAttribute',
+        JSXSpreadAttribute: 'JSXSpreadAttribute',
+        JSXText: 'JSXText',
         YieldExpression: 'YieldExpression',
         AwaitExpression: 'AwaitExpression'
     };
@@ -2542,32 +2516,33 @@ parseYieldExpression: true, parseAwaitExpression: true
 
     // Error messages should be identical to V8.
     Messages = {
-        UnexpectedToken:  'Unexpected token %0',
-        UnexpectedNumber:  'Unexpected number',
-        UnexpectedString:  'Unexpected string',
-        UnexpectedIdentifier:  'Unexpected identifier',
-        UnexpectedReserved:  'Unexpected reserved word',
-        UnexpectedTemplate:  'Unexpected quasi %0',
-        UnexpectedEOS:  'Unexpected end of input',
-        NewlineAfterThrow:  'Illegal newline after throw',
+        UnexpectedToken: 'Unexpected token %0',
+        UnexpectedNumber: 'Unexpected number',
+        UnexpectedString: 'Unexpected string',
+        UnexpectedIdentifier: 'Unexpected identifier',
+        UnexpectedReserved: 'Unexpected reserved word',
+        UnexpectedTemplate: 'Unexpected quasi %0',
+        UnexpectedEOS: 'Unexpected end of input',
+        NewlineAfterThrow: 'Illegal newline after throw',
         InvalidRegExp: 'Invalid regular expression',
-        UnterminatedRegExp:  'Invalid regular expression: missing /',
-        InvalidLHSInAssignment:  'Invalid left-hand side in assignment',
-        InvalidLHSInFormalsList:  'Invalid left-hand side in formals list',
-        InvalidLHSInForIn:  'Invalid left-hand side in for-in',
+        UnterminatedRegExp: 'Invalid regular expression: missing /',
+        InvalidLHSInAssignment: 'Invalid left-hand side in assignment',
+        InvalidLHSInFormalsList: 'Invalid left-hand side in formals list',
+        InvalidLHSInForIn: 'Invalid left-hand side in for-in',
         MultipleDefaultsInSwitch: 'More than one default clause in switch statement',
-        NoCatchOrFinally:  'Missing catch or finally after try',
+        NoCatchOrFinally: 'Missing catch or finally after try',
         UnknownLabel: 'Undefined label \'%0\'',
         Redeclaration: '%0 \'%1\' has already been declared',
         IllegalContinue: 'Illegal continue statement',
         IllegalBreak: 'Illegal break statement',
         IllegalDuplicateClassProperty: 'Illegal duplicate property in class definition',
+        IllegalClassConstructorProperty: 'Illegal constructor property in class definition',
         IllegalReturn: 'Illegal return statement',
         IllegalSpread: 'Illegal spread element',
-        StrictModeWith:  'Strict mode code may not include a with statement',
-        StrictCatchVariable:  'Catch variable may not be eval or arguments in strict mode',
-        StrictVarName:  'Variable name may not be eval or arguments in strict mode',
-        StrictParamName:  'Parameter name eval or arguments is not allowed in strict mode',
+        StrictModeWith: 'Strict mode code may not include a with statement',
+        StrictCatchVariable: 'Catch variable may not be eval or arguments in strict mode',
+        StrictVarName: 'Variable name may not be eval or arguments in strict mode',
+        StrictParamName: 'Parameter name eval or arguments is not allowed in strict mode',
         StrictParamDupe: 'Strict mode function may not have duplicate parameter names',
         ParameterAfterRestParameter: 'Rest parameter must be final parameter of an argument list',
         DefaultRestParameter: 'Rest parameter can not have a default value',
@@ -2575,28 +2550,28 @@ parseYieldExpression: true, parseAwaitExpression: true
         PropertyAfterSpreadProperty: 'A rest property must be the final property of an object literal',
         ObjectPatternAsRestParameter: 'Invalid rest parameter',
         ObjectPatternAsSpread: 'Invalid spread argument',
-        StrictFunctionName:  'Function name may not be eval or arguments in strict mode',
-        StrictOctalLiteral:  'Octal literals are not allowed in strict mode.',
-        StrictDelete:  'Delete of an unqualified identifier in strict mode.',
-        StrictDuplicateProperty:  'Duplicate data property in object literal not allowed in strict mode',
-        AccessorDataProperty:  'Object literal may not have data and accessor property with the same name',
-        AccessorGetSet:  'Object literal may not have multiple get/set accessors with the same name',
-        StrictLHSAssignment:  'Assignment to eval or arguments is not allowed in strict mode',
-        StrictLHSPostfix:  'Postfix increment/decrement may not have eval or arguments operand in strict mode',
-        StrictLHSPrefix:  'Prefix increment/decrement may not have eval or arguments operand in strict mode',
-        StrictReservedWord:  'Use of future reserved word in strict mode',
+        StrictFunctionName: 'Function name may not be eval or arguments in strict mode',
+        StrictOctalLiteral: 'Octal literals are not allowed in strict mode.',
+        StrictDelete: 'Delete of an unqualified identifier in strict mode.',
+        StrictDuplicateProperty: 'Duplicate data property in object literal not allowed in strict mode',
+        AccessorDataProperty: 'Object literal may not have data and accessor property with the same name',
+        AccessorGetSet: 'Object literal may not have multiple get/set accessors with the same name',
+        StrictLHSAssignment: 'Assignment to eval or arguments is not allowed in strict mode',
+        StrictLHSPostfix: 'Postfix increment/decrement may not have eval or arguments operand in strict mode',
+        StrictLHSPrefix: 'Prefix increment/decrement may not have eval or arguments operand in strict mode',
+        StrictReservedWord: 'Use of future reserved word in strict mode',
         MissingFromClause: 'Missing from clause',
         NoAsAfterImportNamespace: 'Missing as after import *',
         InvalidModuleSpecifier: 'Invalid module specifier',
         IllegalImportDeclaration: 'Illegal import declaration',
         IllegalExportDeclaration: 'Illegal export declaration',
-        NoUnintializedConst: 'Const must be initialized',
+        NoUninitializedConst: 'Const must be initialized',
         ComprehensionRequiresBlock: 'Comprehension must have at least one block',
-        ComprehensionError:  'Comprehension Error',
-        EachNotAllowed:  'Each is not supported',
-        InvalidXJSAttributeValue: 'XJS value should be either an expression or a quoted XJS text',
-        ExpectedXJSClosingTag: 'Expected corresponding XJS closing tag for %0',
-        AdjacentXJSElements: 'Adjacent XJS elements must be wrapped in an enclosing tag',
+        ComprehensionError: 'Comprehension Error',
+        EachNotAllowed: 'Each is not supported',
+        InvalidJSXAttributeValue: 'JSX value should be either an expression or a quoted JSX text',
+        ExpectedJSXClosingTag: 'Expected corresponding JSX closing tag for %0',
+        AdjacentJSXElements: 'Adjacent JSX elements must be wrapped in an enclosing tag',
         ConfusedAboutFunctionType: 'Unexpected token =>. It looks like ' +
             'you are trying to write a function type, but you ended up ' +
             'writing a grouped type followed by an =>, which is a syntax ' +
@@ -2644,7 +2619,7 @@ parseYieldExpression: true, parseAwaitExpression: true
         return Object.prototype.hasOwnProperty.call(this.$data, key);
     };
 
-    StringMap.prototype['delete'] = function (key) {
+    StringMap.prototype["delete"] = function (key) {
         key = '$' + key;
         return delete this.$data[key];
     };
@@ -2776,69 +2751,134 @@ parseYieldExpression: true, parseAwaitExpression: true
 
     // 7.4 Comments
 
-    function skipComment() {
-        var ch, blockComment, lineComment;
+    function addComment(type, value, start, end, loc) {
+        var comment;
+        assert(typeof start === 'number', 'Comment must have valid position');
 
-        blockComment = false;
-        lineComment = false;
+        // Because the way the actual token is scanned, often the comments
+        // (if any) are skipped twice during the lexical analysis.
+        // Thus, we need to skip adding a comment if the comment array already
+        // handled it.
+        if (state.lastCommentStart >= start) {
+            return;
+        }
+        state.lastCommentStart = start;
+
+        comment = {
+            type: type,
+            value: value
+        };
+        if (extra.range) {
+            comment.range = [start, end];
+        }
+        if (extra.loc) {
+            comment.loc = loc;
+        }
+        extra.comments.push(comment);
+        if (extra.attachComment) {
+            extra.leadingComments.push(comment);
+            extra.trailingComments.push(comment);
+        }
+    }
+
+    function skipSingleLineComment() {
+        var start, loc, ch, comment;
+
+        start = index - 2;
+        loc = {
+            start: {
+                line: lineNumber,
+                column: index - lineStart - 2
+            }
+        };
+
+        while (index < length) {
+            ch = source.charCodeAt(index);
+            ++index;
+            if (isLineTerminator(ch)) {
+                if (extra.comments) {
+                    comment = source.slice(start + 2, index - 1);
+                    loc.end = {
+                        line: lineNumber,
+                        column: index - lineStart - 1
+                    };
+                    addComment('Line', comment, start, index - 1, loc);
+                }
+                if (ch === 13 && source.charCodeAt(index) === 10) {
+                    ++index;
+                }
+                ++lineNumber;
+                lineStart = index;
+                return;
+            }
+        }
+
+        if (extra.comments) {
+            comment = source.slice(start + 2, index);
+            loc.end = {
+                line: lineNumber,
+                column: index - lineStart
+            };
+            addComment('Line', comment, start, index, loc);
+        }
+    }
+
+    function skipMultiLineComment() {
+        var start, loc, ch, comment;
+
+        if (extra.comments) {
+            start = index - 2;
+            loc = {
+                start: {
+                    line: lineNumber,
+                    column: index - lineStart - 2
+                }
+            };
+        }
+
+        while (index < length) {
+            ch = source.charCodeAt(index);
+            if (isLineTerminator(ch)) {
+                if (ch === 13 && source.charCodeAt(index + 1) === 10) {
+                    ++index;
+                }
+                ++lineNumber;
+                ++index;
+                lineStart = index;
+                if (index >= length) {
+                    throwError({}, Messages.UnexpectedToken, 'ILLEGAL');
+                }
+            } else if (ch === 42) {
+                // Block comment ends with '*/' (char #42, char #47).
+                if (source.charCodeAt(index + 1) === 47) {
+                    ++index;
+                    ++index;
+                    if (extra.comments) {
+                        comment = source.slice(start + 2, index - 2);
+                        loc.end = {
+                            line: lineNumber,
+                            column: index - lineStart
+                        };
+                        addComment('Block', comment, start, index, loc);
+                    }
+                    return;
+                }
+                ++index;
+            } else {
+                ++index;
+            }
+        }
+
+        throwError({}, Messages.UnexpectedToken, 'ILLEGAL');
+    }
+
+    function skipComment() {
+        var ch;
 
         while (index < length) {
             ch = source.charCodeAt(index);
 
-            if (lineComment) {
-                ++index;
-                if (isLineTerminator(ch)) {
-                    lineComment = false;
-                    if (ch === 13 && source.charCodeAt(index) === 10) {
-                        ++index;
-                    }
-                    ++lineNumber;
-                    lineStart = index;
-                }
-            } else if (blockComment) {
-                if (isLineTerminator(ch)) {
-                    if (ch === 13) {
-                        ++index;
-                    }
-                    if (ch !== 13 || source.charCodeAt(index) === 10) {
-                        ++lineNumber;
-                        ++index;
-                        lineStart = index;
-                        if (index >= length) {
-                            throwError({}, Messages.UnexpectedToken, 'ILLEGAL');
-                        }
-                    }
-                } else {
-                    ch = source.charCodeAt(index++);
-                    if (index >= length) {
-                        throwError({}, Messages.UnexpectedToken, 'ILLEGAL');
-                    }
-                    // Block comment ends with '*/' (char #42, char #47).
-                    if (ch === 42) {
-                        ch = source.charCodeAt(index);
-                        if (ch === 47) {
-                            ++index;
-                            blockComment = false;
-                        }
-                    }
-                }
-            } else if (ch === 47) {
-                ch = source.charCodeAt(index + 1);
-                // Line comment starts with '//' (char #47, char #47).
-                if (ch === 47) {
-                    index += 2;
-                    lineComment = true;
-                } else if (ch === 42) {
-                    // Block comment starts with '/*' (char #47, char #42).
-                    index += 2;
-                    blockComment = true;
-                    if (index >= length) {
-                        throwError({}, Messages.UnexpectedToken, 'ILLEGAL');
-                    }
-                } else {
-                    break;
-                }
-            } else if (isWhiteSpace(ch)) {
+            if (isWhiteSpace(ch)) {
                 ++index;
             } else if (isLineTerminator(ch)) {
                 ++index;
@@ -2847,6 +2887,19 @@ parseYieldExpression: true, parseAwaitExpression: true
                 }
                 ++lineNumber;
                 lineStart = index;
+            } else if (ch === 47) { // 47 is '/'
+                ch = source.charCodeAt(index + 1);
+                if (ch === 47) {
+                    ++index;
+                    ++index;
+                    skipSingleLineComment();
+                } else if (ch === 42) {  // 42 is '*'
+                    ++index;
+                    ++index;
+                    skipMultiLineComment();
+                } else {
+                    break;
+                }
             } else {
                 break;
             }
@@ -3009,7 +3062,7 @@ parseYieldExpression: true, parseAwaitExpression: true
             ch3,
             ch4;
 
-        if (state.inXJSTag || state.inXJSChild) {
+        if (state.inJSXTag || state.inJSXChild) {
             // Don't need to check for '{' and '}' as it's already handled
             // correctly by default.
             switch (code) {
@@ -3249,6 +3302,41 @@ parseYieldExpression: true, parseAwaitExpression: true
         };
     }
 
+    function scanBinaryLiteral(start) {
+        var ch, number;
+
+        number = '';
+
+        while (index < length) {
+            ch = source[index];
+            if (ch !== '0' && ch !== '1') {
+                break;
+            }
+            number += source[index++];
+        }
+
+        if (number.length === 0) {
+            // only 0b or 0B
+            throwError({}, Messages.UnexpectedToken, 'ILLEGAL');
+        }
+
+        if (index < length) {
+            ch = source.charCodeAt(index);
+            /* istanbul ignore else */
+            if (isIdentifierStart(ch) || isDecimalDigit(ch)) {
+                throwError({}, Messages.UnexpectedToken, 'ILLEGAL');
+            }
+        }
+
+        return {
+            type: Token.NumericLiteral,
+            value: parseInt(number, 2),
+            lineNumber: lineNumber,
+            lineStart: lineStart,
+            range: [start, index]
+        };
+    }
+
     function scanOctalLiteral(prefix, start) {
         var number, octal;
 
@@ -3288,7 +3376,7 @@ parseYieldExpression: true, parseAwaitExpression: true
     }
 
     function scanNumericLiteral() {
-        var number, start, ch, octal;
+        var number, start, ch;
 
         ch = source[index];
         assert(isDecimalDigit(ch.charCodeAt(0)) || (ch === '.'),
@@ -3311,35 +3399,7 @@ parseYieldExpression: true, parseAwaitExpression: true
                 }
                 if (ch === 'b' || ch === 'B') {
                     ++index;
-                    number = '';
-
-                    while (index < length) {
-                        ch = source[index];
-                        if (ch !== '0' && ch !== '1') {
-                            break;
-                        }
-                        number += source[index++];
-                    }
-
-                    if (number.length === 0) {
-                        // only 0b or 0B
-                        throwError({}, Messages.UnexpectedToken, 'ILLEGAL');
-                    }
-
-                    if (index < length) {
-                        ch = source.charCodeAt(index);
-                        /* istanbul ignore else */
-                        if (isIdentifierStart(ch) || isDecimalDigit(ch)) {
-                            throwError({}, Messages.UnexpectedToken, 'ILLEGAL');
-                        }
-                    }
-                    return {
-                        type: Token.NumericLiteral,
-                        value: parseInt(number, 2),
-                        lineNumber: lineNumber,
-                        lineStart: lineStart,
-                        range: [start, index]
-                    };
+                    return scanBinaryLiteral(start);
                 }
                 if (ch === 'o' || ch === 'O' || isOctalDigit(ch)) {
                     return scanOctalLiteral(ch, start);
@@ -3480,7 +3540,7 @@ parseYieldExpression: true, parseAwaitExpression: true
                     }
                 } else {
                     ++lineNumber;
-                    if (ch ===  '\r' && source[index] === '\n') {
+                    if (ch === '\r' && source[index] === '\n') {
                         ++index;
                     }
                     lineStart = index;
@@ -3597,14 +3657,14 @@ parseYieldExpression: true, parseAwaitExpression: true
                     }
                 } else {
                     ++lineNumber;
-                    if (ch ===  '\r' && source[index] === '\n') {
+                    if (ch === '\r' && source[index] === '\n') {
                         ++index;
                     }
                     lineStart = index;
                 }
             } else if (isLineTerminator(ch.charCodeAt(0))) {
                 ++lineNumber;
-                if (ch ===  '\r' && source[index] === '\n') {
+                if (ch === '\r' && source[index] === '\n') {
                     ++index;
                 }
                 lineStart = index;
@@ -3651,86 +3711,10 @@ parseYieldExpression: true, parseAwaitExpression: true
         return template;
     }
 
-    function scanRegExp() {
-        var str, ch, start, pattern, flags, value, classMarker = false, restore, terminated = false, tmp;
+    function testRegExp(pattern, flags) {
+        var tmp = pattern,
+            value;
 
-        lookahead = null;
-        skipComment();
-
-        start = index;
-        ch = source[index];
-        assert(ch === '/', 'Regular expression literal must start with a slash');
-        str = source[index++];
-
-        while (index < length) {
-            ch = source[index++];
-            str += ch;
-            if (classMarker) {
-                if (ch === ']') {
-                    classMarker = false;
-                }
-            } else {
-                if (ch === '\\') {
-                    ch = source[index++];
-                    // ECMA-262 7.8.5
-                    if (isLineTerminator(ch.charCodeAt(0))) {
-                        throwError({}, Messages.UnterminatedRegExp);
-                    }
-                    str += ch;
-                } else if (ch === '/') {
-                    terminated = true;
-                    break;
-                } else if (ch === '[') {
-                    classMarker = true;
-                } else if (isLineTerminator(ch.charCodeAt(0))) {
-                    throwError({}, Messages.UnterminatedRegExp);
-                }
-            }
-        }
-
-        if (!terminated) {
-            throwError({}, Messages.UnterminatedRegExp);
-        }
-
-        // Exclude leading and trailing slash.
-        pattern = str.substr(1, str.length - 2);
-
-        flags = '';
-        while (index < length) {
-            ch = source[index];
-            if (!isIdentifierPart(ch.charCodeAt(0))) {
-                break;
-            }
-
-            ++index;
-            if (ch === '\\' && index < length) {
-                ch = source[index];
-                if (ch === 'u') {
-                    ++index;
-                    restore = index;
-                    ch = scanHexEscape('u');
-                    /* istanbul ignore else */
-                    if (ch) {
-                        flags += ch;
-                        for (str += '\\u'; restore < index; ++restore) {
-                            str += source[restore];
-                        }
-                    } else {
-                        index = restore;
-                        flags += 'u';
-                        str += '\\u';
-                    }
-                    throwErrorTolerant({}, Messages.UnexpectedToken, 'ILLEGAL');
-                } else {
-                    str += '\\';
-                }
-            } else {
-                flags += ch;
-                str += ch;
-            }
-        }
-
-        tmp = pattern;
         if (flags.indexOf('u') >= 0) {
             // Replace each astral symbol and every Unicode code point
             // escape sequence with a single ASCII symbol to avoid throwing on
@@ -3761,30 +3745,135 @@ parseYieldExpression: true, parseAwaitExpression: true
         // `null` in case the current environment doesn't support the flags it
         // uses.
         try {
-            value = new RegExp(pattern, flags);
+            return new RegExp(pattern, flags);
         } catch (exception) {
-            value = null;
+            return null;
         }
+    }
+
+    function scanRegExpBody() {
+        var ch, str, classMarker, terminated, body;
+
+        ch = source[index];
+        assert(ch === '/', 'Regular expression literal must start with a slash');
+        str = source[index++];
+
+        classMarker = false;
+        terminated = false;
+        while (index < length) {
+            ch = source[index++];
+            str += ch;
+            if (ch === '\\') {
+                ch = source[index++];
+                // ECMA-262 7.8.5
+                if (isLineTerminator(ch.charCodeAt(0))) {
+                    throwError({}, Messages.UnterminatedRegExp);
+                }
+                str += ch;
+            } else if (isLineTerminator(ch.charCodeAt(0))) {
+                throwError({}, Messages.UnterminatedRegExp);
+            } else if (classMarker) {
+                if (ch === ']') {
+                    classMarker = false;
+                }
+            } else {
+                if (ch === '/') {
+                    terminated = true;
+                    break;
+                } else if (ch === '[') {
+                    classMarker = true;
+                }
+            }
+        }
+
+        if (!terminated) {
+            throwError({}, Messages.UnterminatedRegExp);
+        }
+
+        // Exclude leading and trailing slash.
+        body = str.substr(1, str.length - 2);
+        return {
+            value: body,
+            literal: str
+        };
+    }
+
+    function scanRegExpFlags() {
+        var ch, str, flags, restore;
+
+        str = '';
+        flags = '';
+        while (index < length) {
+            ch = source[index];
+            if (!isIdentifierPart(ch.charCodeAt(0))) {
+                break;
+            }
+
+            ++index;
+            if (ch === '\\' && index < length) {
+                ch = source[index];
+                if (ch === 'u') {
+                    ++index;
+                    restore = index;
+                    ch = scanHexEscape('u');
+                    if (ch) {
+                        flags += ch;
+                        for (str += '\\u'; restore < index; ++restore) {
+                            str += source[restore];
+                        }
+                    } else {
+                        index = restore;
+                        flags += 'u';
+                        str += '\\u';
+                    }
+                    throwErrorTolerant({}, Messages.UnexpectedToken, 'ILLEGAL');
+                } else {
+                    str += '\\';
+                    throwErrorTolerant({}, Messages.UnexpectedToken, 'ILLEGAL');
+                }
+            } else {
+                flags += ch;
+                str += ch;
+            }
+        }
+
+        return {
+            value: flags,
+            literal: str
+        };
+    }
+
+    function scanRegExp() {
+        var start, body, flags, value;
+
+        lookahead = null;
+        skipComment();
+        start = index;
+
+        body = scanRegExpBody();
+        flags = scanRegExpFlags();
+        value = testRegExp(body.value, flags.value);
 
         if (extra.tokenize) {
             return {
                 type: Token.RegularExpression,
                 value: value,
                 regex: {
-                    pattern: pattern,
-                    flags: flags
+                    pattern: body.value,
+                    flags: flags.value
                 },
                 lineNumber: lineNumber,
                 lineStart: lineStart,
                 range: [start, index]
             };
         }
+
         return {
-            literal: str,
+            literal: body.literal + flags.literal,
             value: value,
             regex: {
-                pattern: pattern,
-                flags: flags
+                pattern: body.value,
+                flags: flags.value
             },
             range: [start, index]
         };
@@ -3851,7 +3940,7 @@ parseYieldExpression: true, parseAwaitExpression: true
             }
             return scanRegExp();
         }
-        if (prevToken.type === 'Keyword') {
+        if (prevToken.type === 'Keyword' && prevToken.value !== 'this') {
             return scanRegExp();
         }
         return scanPunctuator();
@@ -3860,7 +3949,7 @@ parseYieldExpression: true, parseAwaitExpression: true
     function advance() {
         var ch;
 
-        if (!state.inXJSChild) {
+        if (!state.inJSXChild) {
             skipComment();
         }
 
@@ -3873,8 +3962,8 @@ parseYieldExpression: true, parseAwaitExpression: true
             };
         }
 
-        if (state.inXJSChild) {
-            return advanceXJSChild();
+        if (state.inJSXChild) {
+            return advanceJSXChild();
         }
 
         ch = source.charCodeAt(index);
@@ -3886,14 +3975,14 @@ parseYieldExpression: true, parseAwaitExpression: true
 
         // String literal starts with single quote (#39) or double quote (#34).
         if (ch === 39 || ch === 34) {
-            if (state.inXJSTag) {
-                return scanXJSStringLiteral();
+            if (state.inJSXTag) {
+                return scanJSXStringLiteral();
             }
             return scanStringLiteral();
         }
 
-        if (state.inXJSTag && isXJSIdentifierStart(ch)) {
-            return scanXJSIdentifier();
+        if (state.inJSXTag && isJSXIdentifierStart(ch)) {
+            return scanJSXIdentifier();
         }
 
         if (ch === 96) {
@@ -4504,78 +4593,78 @@ parseYieldExpression: true, parseAwaitExpression: true
             };
         },
 
-        createXJSAttribute: function (name, value) {
+        createJSXAttribute: function (name, value) {
             return {
-                type: Syntax.XJSAttribute,
+                type: Syntax.JSXAttribute,
                 name: name,
                 value: value || null
             };
         },
 
-        createXJSSpreadAttribute: function (argument) {
+        createJSXSpreadAttribute: function (argument) {
             return {
-                type: Syntax.XJSSpreadAttribute,
+                type: Syntax.JSXSpreadAttribute,
                 argument: argument
             };
         },
 
-        createXJSIdentifier: function (name) {
+        createJSXIdentifier: function (name) {
             return {
-                type: Syntax.XJSIdentifier,
+                type: Syntax.JSXIdentifier,
                 name: name
             };
         },
 
-        createXJSNamespacedName: function (namespace, name) {
+        createJSXNamespacedName: function (namespace, name) {
             return {
-                type: Syntax.XJSNamespacedName,
+                type: Syntax.JSXNamespacedName,
                 namespace: namespace,
                 name: name
             };
         },
 
-        createXJSMemberExpression: function (object, property) {
+        createJSXMemberExpression: function (object, property) {
             return {
-                type: Syntax.XJSMemberExpression,
+                type: Syntax.JSXMemberExpression,
                 object: object,
                 property: property
             };
         },
 
-        createXJSElement: function (openingElement, closingElement, children) {
+        createJSXElement: function (openingElement, closingElement, children) {
             return {
-                type: Syntax.XJSElement,
+                type: Syntax.JSXElement,
                 openingElement: openingElement,
                 closingElement: closingElement,
                 children: children
             };
         },
 
-        createXJSEmptyExpression: function () {
+        createJSXEmptyExpression: function () {
             return {
-                type: Syntax.XJSEmptyExpression
+                type: Syntax.JSXEmptyExpression
             };
         },
 
-        createXJSExpressionContainer: function (expression) {
+        createJSXExpressionContainer: function (expression) {
             return {
-                type: Syntax.XJSExpressionContainer,
+                type: Syntax.JSXExpressionContainer,
                 expression: expression
             };
         },
 
-        createXJSOpeningElement: function (name, attributes, selfClosing) {
+        createJSXOpeningElement: function (name, attributes, selfClosing) {
             return {
-                type: Syntax.XJSOpeningElement,
+                type: Syntax.JSXOpeningElement,
                 name: name,
                 selfClosing: selfClosing,
                 attributes: attributes
             };
         },
 
-        createXJSClosingElement: function (name) {
+        createJSXClosingElement: function (name) {
             return {
-                type: Syntax.XJSClosingElement,
+                type: Syntax.JSXClosingElement,
                 name: name
             };
         },
@@ -4916,13 +5005,13 @@ parseYieldExpression: true, parseAwaitExpression: true
             };
         },
 
-        createExportDeclaration: function (isDefault, declaration, specifiers, source) {
+        createExportDeclaration: function (isDefault, declaration, specifiers, src) {
             return {
                 type: Syntax.ExportDeclaration,
                 'default': !!isDefault,
                 declaration: declaration,
                 specifiers: specifiers,
-                source: source
+                source: src
             };
         },
 
@@ -4934,20 +5023,20 @@ parseYieldExpression: true, parseAwaitExpression: true
             };
         },
 
-        createImportDeclaration: function (specifiers, source, isType) {
+        createImportDeclaration: function (specifiers, src, isType) {
             return {
                 type: Syntax.ImportDeclaration,
                 specifiers: specifiers,
-                source: source,
+                source: src,
                 isType: isType
             };
         },
 
-        createYieldExpression: function (argument, delegate) {
+        createYieldExpression: function (argument, dlg) {
             return {
                 type: Syntax.YieldExpression,
                 argument: argument,
-                delegate: delegate
+                delegate: dlg
             };
         },
 
@@ -4993,9 +5082,9 @@ parseYieldExpression: true, parseAwaitExpression: true
             args = Array.prototype.slice.call(arguments, 2),
             msg = messageFormat.replace(
                 /%(\d)/g,
-                function (whole, index) {
-                    assert(index < args.length, 'Message reference must be in range');
-                    return args[index];
+                function (whole, idx) {
+                    assert(idx < args.length, 'Message reference must be in range');
+                    return args[idx];
                 }
             );
 
@@ -5039,7 +5128,7 @@ parseYieldExpression: true, parseAwaitExpression: true
             throwError(token, Messages.UnexpectedNumber);
         }
 
-        if (token.type === Token.StringLiteral || token.type === Token.XJSText) {
+        if (token.type === Token.StringLiteral || token.type === Token.JSXText) {
             throwError(token, Messages.UnexpectedString);
         }
 
@@ -5202,7 +5291,7 @@ parseYieldExpression: true, parseAwaitExpression: true
     // 11.1.4 Array Initialiser
 
     function parseArrayInitialiser() {
-        var elements = [], blocks = [], filter = null, tmp, possiblecomprehension = true, body,
+        var elements = [], blocks = [], filter = null, tmp, possiblecomprehension = true,
             marker = markerCreate();
 
         expect('[');
@@ -5358,7 +5447,7 @@ parseYieldExpression: true, parseAwaitExpression: true
     }
 
     function parseObjectProperty() {
-        var token, key, id, value, param, expr, computed,
+        var token, key, id, param, computed,
             marker = markerCreate(), returnType, typeParameters;
 
         token = lookahead;
@@ -5764,7 +5853,7 @@ parseYieldExpression: true, parseAwaitExpression: true
         }
 
         if (match('<')) {
-            return parseXJSElement();
+            return parseJSXElement();
         }
 
         throwUnexpected(lex());
@@ -6412,9 +6501,7 @@ parseYieldExpression: true, parseAwaitExpression: true
     // 11.14 Comma Operator
 
     function parseExpression() {
-        var marker, expr, expressions, sequence, coverFormalsList, spreadFound, oldParenthesizedCount;
-
-        oldParenthesizedCount = state.parenthesizedCount;
+        var marker, expr, expressions, sequence, spreadFound;
 
         marker = markerCreate();
         expr = parseAssignmentExpression();
@@ -6592,7 +6679,7 @@ parseYieldExpression: true, parseAwaitExpression: true
 
     function parseObjectType(allowStatic) {
         var callProperties = [], indexers = [], marker, optional = false,
-            properties = [], property, propertyKey, propertyTypeAnnotation,
+            properties = [], propertyKey, propertyTypeAnnotation,
             token, isStatic, matchStatic;
 
         expect('{');
@@ -6656,9 +6743,8 @@ parseYieldExpression: true, parseAwaitExpression: true
     }
 
     function parseGenericType() {
-        var marker = markerCreate(), returnType = null,
-            typeParameters = null, typeIdentifier,
-            typeIdentifierMarker = markerCreate;
+        var marker = markerCreate(),
+            typeParameters = null, typeIdentifier;
 
         typeIdentifier = parseVariableIdentifier();
 
@@ -6748,7 +6834,7 @@ parseYieldExpression: true, parseAwaitExpression: true
     // primary types are kind of like primary expressions...they're the
     // primitives with which other types are constructed.
     function parsePrimaryType() {
-        var typeIdentifier = null, params = null, returnType = null,
+        var params = null, returnType = null,
             marker = markerCreate(), rest = null, tmp,
             typeParameters, token, type, isGroupedType = false;
 
@@ -6994,7 +7080,7 @@ parseYieldExpression: true, parseAwaitExpression: true
 
         if (kind === 'const') {
             if (!match('=')) {
-                throwError({}, Messages.NoUnintializedConst);
+                throwError({}, Messages.NoUninitializedConst);
             }
             expect('=');
             init = parseAssignmentExpression();
@@ -7086,7 +7172,8 @@ parseYieldExpression: true, parseAwaitExpression: true
     }
 
     function parseExportDeclaration() {
-        var backtrackToken, id, previousAllowKeyword, declaration = null,
+        var declaration = null,
+            possibleIdentifierToken, sourceElement,
             isExportFromIdentifier,
             src = null, specifiers = [],
             marker = markerCreate();
@@ -7098,20 +7185,17 @@ parseYieldExpression: true, parseAwaitExpression: true
             // export default ...
             lex();
             if (matchKeyword('function') || matchKeyword('class')) {
-                backtrackToken = lookahead;
-                lex();
-                if (isIdentifierName(lookahead)) {
+                possibleIdentifierToken = lookahead2();
+                if (isIdentifierName(possibleIdentifierToken)) {
                     // covers:
                     // export default function foo () {}
                     // export default class foo {}
-                    id = parseNonComputedProperty();
-                    rewind(backtrackToken);
-                    return markerApply(marker, delegate.createExportDeclaration(true, parseSourceElement(), [id], null));
+                    sourceElement = parseSourceElement();
+                    return markerApply(marker, delegate.createExportDeclaration(true, sourceElement, [sourceElement.id], null));
                 }
                 // covers:
                 // export default function () {}
                 // export default class {}
-                rewind(backtrackToken);
                 switch (lookahead.value) {
                 case 'class':
                     return markerApply(marker, delegate.createExportDeclaration(true, parseClassExpression(), [], null));
@@ -7869,7 +7953,7 @@ parseYieldExpression: true, parseAwaitExpression: true
 
             state.labelSet.set(expr.name, true);
             labeledBody = parseStatement();
-            state.labelSet['delete'](expr.name);
+            state.labelSet["delete"](expr.name);
             return markerApply(marker, delegate.createLabeledStatement(expr, labeledBody));
         }
 
@@ -8270,54 +8354,24 @@ parseYieldExpression: true, parseAwaitExpression: true
         return markerApply(marker, delegate.createAwaitExpression(expr));
     }
 
-    // 14 Classes
+    // 14 Functions and classes
 
-    function validateDuplicateProp(propMap, key, accessor) {
-        var propInfo, reversed, name, isValidDuplicateProp;
+    // 14.1 Functions is defined above (13 in ES5)
+    // 14.2 Arrow Functions Definitions is defined in (7.3 assignments)
 
-        name = getFieldName(key);
-
-        if (propMap.has(name)) {
-            propInfo = propMap.get(name);
-            if (accessor === 'data') {
-                isValidDuplicateProp = false;
-            } else {
-                if (accessor === 'get') {
-                    reversed = 'set';
-                } else {
-                    reversed = 'get';
-                }
-
-                isValidDuplicateProp =
-                    // There isn't already a specified accessor for this prop
-                    propInfo[accessor] === undefined
-                    // There isn't already a data prop by this name
-                    && propInfo.data === undefined
-                    // The only existing prop by this name is a reversed accessor
-                    && propInfo[reversed] !== undefined;
-            }
-            if (!isValidDuplicateProp) {
-                throwError(key, Messages.IllegalDuplicateClassProperty);
-            }
-        } else {
-            propInfo = {
-                get: undefined,
-                set: undefined,
-                data: undefined
-            };
-            propMap.set(name, propInfo);
-        }
-        propInfo[accessor] = true;
+    // 14.3 Method Definitions
+    // 14.3.7
+    function specialMethod(methodDefinition) {
+        return methodDefinition.kind === 'get' ||
+               methodDefinition.kind === 'set' ||
+               methodDefinition.value.generator;
     }
 
-    function parseMethodDefinition(existingPropNames, key, isStatic, generator, computed) {
-        var token, param, propType, isValidDuplicateProp = false,
-            isAsync, typeParameters, tokenValue, returnType,
-            annotationMarker, propMap;
+    function parseMethodDefinition(key, isStatic, generator, computed) {
+        var token, param, propType,
+            isAsync, typeParameters, tokenValue, returnType;
 
         propType = isStatic ? ClassPropertyType["static"] : ClassPropertyType.prototype;
-
-        propMap = existingPropNames[propType];
 
         if (generator) {
             return delegate.createMethodDefinition(
@@ -8334,12 +8388,6 @@ parseYieldExpression: true, parseAwaitExpression: true
         if (tokenValue === 'get' && !match('(')) {
             key = parseObjectPropertyKey();
 
-            // It is a syntax error if any other properties have a name
-            // duplicating this one unless they are a setter
-            if (!computed) {
-                validateDuplicateProp(propMap, key, 'get');
-            }
-
             expect('(');
             expect(')');
             if (match(':')) {
@@ -8355,12 +8403,6 @@ parseYieldExpression: true, parseAwaitExpression: true
         }
         if (tokenValue === 'set' && !match('(')) {
             key = parseObjectPropertyKey();
-
-            // It is a syntax error if any other properties have a name
-            // duplicating this one unless they are a getter
-            if (!computed) {
-                validateDuplicateProp(propMap, key, 'set');
-            }
 
             expect('(');
             token = lookahead;
@@ -8392,12 +8434,6 @@ parseYieldExpression: true, parseAwaitExpression: true
             key = parseObjectPropertyKey();
         }
 
-        // It is a syntax error if any other properties have the same name as a
-        // non-getter, non-setter method
-        if (!computed) {
-            validateDuplicateProp(propMap, key, 'data');
-        }
-
         return delegate.createMethodDefinition(
             propType,
             '',
@@ -8411,7 +8447,7 @@ parseYieldExpression: true, parseAwaitExpression: true
         );
     }
 
-    function parseClassProperty(existingPropNames, key, computed, isStatic) {
+    function parseClassProperty(key, computed, isStatic) {
         var typeAnnotation;
 
         typeAnnotation = parseTypeAnnotation();
@@ -8425,12 +8461,12 @@ parseYieldExpression: true, parseAwaitExpression: true
         );
     }
 
-    function parseClassElement(existingProps) {
+    function parseClassElement() {
         var computed = false, generator = false, key, marker = markerCreate(),
             isStatic = false, possiblyOpenBracketToken;
         if (match(';')) {
             lex();
-            return;
+            return undefined;
         }
 
         if (lookahead.value === 'static') {
@@ -8456,11 +8492,10 @@ parseYieldExpression: true, parseAwaitExpression: true
         key = parseObjectPropertyKey();
 
         if (!generator && lookahead.value === ':') {
-            return markerApply(marker, parseClassProperty(existingProps, key, computed, isStatic));
+            return markerApply(marker, parseClassProperty(key, computed, isStatic));
         }
 
         return markerApply(marker, parseMethodDefinition(
-            existingProps,
             key,
             isStatic,
             generator,
@@ -8469,7 +8504,8 @@ parseYieldExpression: true, parseAwaitExpression: true
     }
 
     function parseClassBody() {
-        var classElement, classElements = [], existingProps = {}, marker = markerCreate();
+        var classElement, classElements = [], existingProps = {},
+            marker = markerCreate(), propName, propType;
 
         existingProps[ClassPropertyType["static"]] = new StringMap();
         existingProps[ClassPropertyType.prototype] = new StringMap();
@@ -8484,6 +8520,25 @@ parseYieldExpression: true, parseAwaitExpression: true
 
             if (typeof classElement !== 'undefined') {
                 classElements.push(classElement);
+
+                propName = !classElement.computed && getFieldName(classElement.key);
+                if (propName !== false) {
+                    propType = classElement["static"] ?
+                                ClassPropertyType["static"] :
+                                ClassPropertyType.prototype;
+
+                    if (classElement.type === Syntax.MethodDefinition) {
+                        if (propName === 'constructor' && !classElement["static"]) {
+                            if (specialMethod(classElement)) {
+                                throwError(classElement, Messages.IllegalClassConstructorProperty);
+                            }
+                            if (existingProps[ClassPropertyType.prototype].has('constructor')) {
+                                throwError(classElement.key, Messages.IllegalDuplicateClassProperty);
+                            }
+                        }
+                        existingProps[propType].set(propName, true);
+                    }
+                }
             }
         }
 
@@ -8721,164 +8776,7 @@ parseYieldExpression: true, parseAwaitExpression: true
         return markerApply(marker, delegate.createProgram(body));
     }
 
-    // The following functions are needed only when the option to preserve
-    // the comments is active.
-
-    function addComment(type, value, start, end, loc) {
-        var comment;
-
-        assert(typeof start === 'number', 'Comment must have valid position');
-
-        // Because the way the actual token is scanned, often the comments
-        // (if any) are skipped twice during the lexical analysis.
-        // Thus, we need to skip adding a comment if the comment array already
-        // handled it.
-        if (state.lastCommentStart >= start) {
-            return;
-        }
-        state.lastCommentStart = start;
-
-        comment = {
-            type: type,
-            value: value
-        };
-        if (extra.range) {
-            comment.range = [start, end];
-        }
-        if (extra.loc) {
-            comment.loc = loc;
-        }
-        extra.comments.push(comment);
-        if (extra.attachComment) {
-            extra.leadingComments.push(comment);
-            extra.trailingComments.push(comment);
-        }
-    }
-
-    function scanComment() {
-        var comment, ch, loc, start, blockComment, lineComment;
-
-        comment = '';
-        blockComment = false;
-        lineComment = false;
-
-        while (index < length) {
-            ch = source[index];
-
-            if (lineComment) {
-                ch = source[index++];
-                if (isLineTerminator(ch.charCodeAt(0))) {
-                    loc.end = {
-                        line: lineNumber,
-                        column: index - lineStart - 1
-                    };
-                    lineComment = false;
-                    addComment('Line', comment, start, index - 1, loc);
-                    if (ch === '\r' && source[index] === '\n') {
-                        ++index;
-                    }
-                    ++lineNumber;
-                    lineStart = index;
-                    comment = '';
-                } else if (index >= length) {
-                    lineComment = false;
-                    comment += ch;
-                    loc.end = {
-                        line: lineNumber,
-                        column: length - lineStart
-                    };
-                    addComment('Line', comment, start, length, loc);
-                } else {
-                    comment += ch;
-                }
-            } else if (blockComment) {
-                if (isLineTerminator(ch.charCodeAt(0))) {
-                    if (ch === '\r') {
-                        ++index;
-                        comment += '\r';
-                    }
-                    if (ch !== '\r' || source[index] === '\n') {
-                        comment += source[index];
-                        ++lineNumber;
-                        ++index;
-                        lineStart = index;
-                        if (index >= length) {
-                            throwError({}, Messages.UnexpectedToken, 'ILLEGAL');
-                        }
-                    }
-                } else {
-                    ch = source[index++];
-                    if (index >= length) {
-                        throwError({}, Messages.UnexpectedToken, 'ILLEGAL');
-                    }
-                    comment += ch;
-                    if (ch === '*') {
-                        ch = source[index];
-                        if (ch === '/') {
-                            comment = comment.substr(0, comment.length - 1);
-                            blockComment = false;
-                            ++index;
-                            loc.end = {
-                                line: lineNumber,
-                                column: index - lineStart
-                            };
-                            addComment('Block', comment, start, index, loc);
-                            comment = '';
-                        }
-                    }
-                }
-            } else if (ch === '/') {
-                ch = source[index + 1];
-                if (ch === '/') {
-                    loc = {
-                        start: {
-                            line: lineNumber,
-                            column: index - lineStart
-                        }
-                    };
-                    start = index;
-                    index += 2;
-                    lineComment = true;
-                    if (index >= length) {
-                        loc.end = {
-                            line: lineNumber,
-                            column: index - lineStart
-                        };
-                        lineComment = false;
-                        addComment('Line', comment, start, index, loc);
-                    }
-                } else if (ch === '*') {
-                    start = index;
-                    index += 2;
-                    blockComment = true;
-                    loc = {
-                        start: {
-                            line: lineNumber,
-                            column: index - lineStart - 2
-                        }
-                    };
-                    if (index >= length) {
-                        throwError({}, Messages.UnexpectedToken, 'ILLEGAL');
-                    }
-                } else {
-                    break;
-                }
-            } else if (isWhiteSpace(ch.charCodeAt(0))) {
-                ++index;
-            } else if (isLineTerminator(ch.charCodeAt(0))) {
-                ++index;
-                if (ch ===  '\r' && source[index] === '\n') {
-                    ++index;
-                }
-                ++lineNumber;
-                lineStart = index;
-            } else {
-                break;
-            }
-        }
-    }
-
-    // 16 XJS
+    // 16 JSX
 
     XHTMLEntities = {
         quot: '\u0022',
@@ -9136,48 +9034,48 @@ parseYieldExpression: true, parseAwaitExpression: true
         diams: '\u2666'
     };
 
-    function getQualifiedXJSName(object) {
-        if (object.type === Syntax.XJSIdentifier) {
+    function getQualifiedJSXName(object) {
+        if (object.type === Syntax.JSXIdentifier) {
             return object.name;
         }
-        if (object.type === Syntax.XJSNamespacedName) {
+        if (object.type === Syntax.JSXNamespacedName) {
             return object.namespace.name + ':' + object.name.name;
         }
         /* istanbul ignore else */
-        if (object.type === Syntax.XJSMemberExpression) {
+        if (object.type === Syntax.JSXMemberExpression) {
             return (
-                getQualifiedXJSName(object.object) + '.' +
-                getQualifiedXJSName(object.property)
+                getQualifiedJSXName(object.object) + '.' +
+                getQualifiedJSXName(object.property)
             );
         }
         /* istanbul ignore next */
         throwUnexpected(object);
     }
 
-    function isXJSIdentifierStart(ch) {
+    function isJSXIdentifierStart(ch) {
         // exclude backslash (\)
         return (ch !== 92) && isIdentifierStart(ch);
     }
 
-    function isXJSIdentifierPart(ch) {
+    function isJSXIdentifierPart(ch) {
         // exclude backslash (\) and add hyphen (-)
         return (ch !== 92) && (ch === 45 || isIdentifierPart(ch));
     }
 
-    function scanXJSIdentifier() {
+    function scanJSXIdentifier() {
         var ch, start, value = '';
 
         start = index;
         while (index < length) {
             ch = source.charCodeAt(index);
-            if (!isXJSIdentifierPart(ch)) {
+            if (!isJSXIdentifierPart(ch)) {
                 break;
             }
             value += source[index++];
         }
 
         return {
-            type: Token.XJSIdentifier,
+            type: Token.JSXIdentifier,
             value: value,
             lineNumber: lineNumber,
             lineStart: lineStart,
@@ -9185,7 +9083,7 @@ parseYieldExpression: true, parseAwaitExpression: true
         };
     }
 
-    function scanXJSEntity() {
+    function scanJSXEntity() {
         var ch, str = '', start = index, count = 0, code;
         ch = source[index];
         assert(ch === '&', 'Entity must start with an ampersand');
@@ -9223,7 +9121,7 @@ parseYieldExpression: true, parseAwaitExpression: true
         return '&';
     }
 
-    function scanXJSText(stopChars) {
+    function scanJSXText(stopChars) {
         var ch, str = '', start;
         start = index;
         while (index < length) {
@@ -9232,7 +9130,7 @@ parseYieldExpression: true, parseAwaitExpression: true
                 break;
             }
             if (ch === '&') {
-                str += scanXJSEntity();
+                str += scanJSXEntity();
             } else {
                 index++;
                 if (ch === '\r' && source[index] === '\n') {
@@ -9248,7 +9146,7 @@ parseYieldExpression: true, parseAwaitExpression: true
             }
         }
         return {
-            type: Token.XJSText,
+            type: Token.JSXText,
             value: str,
             lineNumber: lineNumber,
             lineStart: lineStart,
@@ -9256,7 +9154,7 @@ parseYieldExpression: true, parseAwaitExpression: true
         };
     }
 
-    function scanXJSStringLiteral() {
+    function scanJSXStringLiteral() {
         var innerToken, quote, start;
 
         quote = source[index];
@@ -9266,7 +9164,7 @@ parseYieldExpression: true, parseAwaitExpression: true
         start = index;
         ++index;
 
-        innerToken = scanXJSText([quote]);
+        innerToken = scanJSXText([quote]);
 
         if (quote !== source[index]) {
             throwError({}, Messages.UnexpectedToken, 'ILLEGAL');
@@ -9280,256 +9178,256 @@ parseYieldExpression: true, parseAwaitExpression: true
     }
 
     /**
-     * Between XJS opening and closing tags (e.g. <foo>HERE</foo>), anything that
-     * is not another XJS tag and is not an expression wrapped by {} is text.
+     * Between JSX opening and closing tags (e.g. <foo>HERE</foo>), anything that
+     * is not another JSX tag and is not an expression wrapped by {} is text.
      */
-    function advanceXJSChild() {
+    function advanceJSXChild() {
         var ch = source.charCodeAt(index);
 
         // '<' 60, '>' 62, '{' 123, '}' 125
         if (ch !== 60 && ch !== 62 && ch !== 123 && ch !== 125) {
-            return scanXJSText(['<', '>', '{', '}']);
+            return scanJSXText(['<', '>', '{', '}']);
         }
 
         return scanPunctuator();
     }
 
-    function parseXJSIdentifier() {
+    function parseJSXIdentifier() {
         var token, marker = markerCreate();
 
-        if (lookahead.type !== Token.XJSIdentifier) {
+        if (lookahead.type !== Token.JSXIdentifier) {
             throwUnexpected(lookahead);
         }
 
         token = lex();
-        return markerApply(marker, delegate.createXJSIdentifier(token.value));
+        return markerApply(marker, delegate.createJSXIdentifier(token.value));
     }
 
-    function parseXJSNamespacedName() {
+    function parseJSXNamespacedName() {
         var namespace, name, marker = markerCreate();
 
-        namespace = parseXJSIdentifier();
+        namespace = parseJSXIdentifier();
         expect(':');
-        name = parseXJSIdentifier();
+        name = parseJSXIdentifier();
 
-        return markerApply(marker, delegate.createXJSNamespacedName(namespace, name));
+        return markerApply(marker, delegate.createJSXNamespacedName(namespace, name));
     }
 
-    function parseXJSMemberExpression() {
+    function parseJSXMemberExpression() {
         var marker = markerCreate(),
-            expr = parseXJSIdentifier();
+            expr = parseJSXIdentifier();
 
         while (match('.')) {
             lex();
-            expr = markerApply(marker, delegate.createXJSMemberExpression(expr, parseXJSIdentifier()));
+            expr = markerApply(marker, delegate.createJSXMemberExpression(expr, parseJSXIdentifier()));
         }
 
         return expr;
     }
 
-    function parseXJSElementName() {
+    function parseJSXElementName() {
         if (lookahead2().value === ':') {
-            return parseXJSNamespacedName();
+            return parseJSXNamespacedName();
         }
         if (lookahead2().value === '.') {
-            return parseXJSMemberExpression();
+            return parseJSXMemberExpression();
         }
 
-        return parseXJSIdentifier();
+        return parseJSXIdentifier();
     }
 
-    function parseXJSAttributeName() {
+    function parseJSXAttributeName() {
         if (lookahead2().value === ':') {
-            return parseXJSNamespacedName();
+            return parseJSXNamespacedName();
         }
 
-        return parseXJSIdentifier();
+        return parseJSXIdentifier();
     }
 
-    function parseXJSAttributeValue() {
+    function parseJSXAttributeValue() {
         var value, marker;
         if (match('{')) {
-            value = parseXJSExpressionContainer();
-            if (value.expression.type === Syntax.XJSEmptyExpression) {
+            value = parseJSXExpressionContainer();
+            if (value.expression.type === Syntax.JSXEmptyExpression) {
                 throwError(
                     value,
-                    'XJS attributes must only be assigned a non-empty ' +
+                    'JSX attributes must only be assigned a non-empty ' +
                         'expression'
                 );
             }
         } else if (match('<')) {
-            value = parseXJSElement();
-        } else if (lookahead.type === Token.XJSText) {
+            value = parseJSXElement();
+        } else if (lookahead.type === Token.JSXText) {
             marker = markerCreate();
             value = markerApply(marker, delegate.createLiteral(lex()));
         } else {
-            throwError({}, Messages.InvalidXJSAttributeValue);
+            throwError({}, Messages.InvalidJSXAttributeValue);
         }
         return value;
     }
 
-    function parseXJSEmptyExpression() {
+    function parseJSXEmptyExpression() {
         var marker = markerCreatePreserveWhitespace();
         while (source.charAt(index) !== '}') {
             index++;
         }
-        return markerApply(marker, delegate.createXJSEmptyExpression());
+        return markerApply(marker, delegate.createJSXEmptyExpression());
     }
 
-    function parseXJSExpressionContainer() {
-        var expression, origInXJSChild, origInXJSTag, marker = markerCreate();
+    function parseJSXExpressionContainer() {
+        var expression, origInJSXChild, origInJSXTag, marker = markerCreate();
 
-        origInXJSChild = state.inXJSChild;
-        origInXJSTag = state.inXJSTag;
-        state.inXJSChild = false;
-        state.inXJSTag = false;
+        origInJSXChild = state.inJSXChild;
+        origInJSXTag = state.inJSXTag;
+        state.inJSXChild = false;
+        state.inJSXTag = false;
 
         expect('{');
 
         if (match('}')) {
-            expression = parseXJSEmptyExpression();
+            expression = parseJSXEmptyExpression();
         } else {
             expression = parseExpression();
         }
 
-        state.inXJSChild = origInXJSChild;
-        state.inXJSTag = origInXJSTag;
+        state.inJSXChild = origInJSXChild;
+        state.inJSXTag = origInJSXTag;
 
         expect('}');
 
-        return markerApply(marker, delegate.createXJSExpressionContainer(expression));
+        return markerApply(marker, delegate.createJSXExpressionContainer(expression));
     }
 
-    function parseXJSSpreadAttribute() {
-        var expression, origInXJSChild, origInXJSTag, marker = markerCreate();
+    function parseJSXSpreadAttribute() {
+        var expression, origInJSXChild, origInJSXTag, marker = markerCreate();
 
-        origInXJSChild = state.inXJSChild;
-        origInXJSTag = state.inXJSTag;
-        state.inXJSChild = false;
-        state.inXJSTag = false;
+        origInJSXChild = state.inJSXChild;
+        origInJSXTag = state.inJSXTag;
+        state.inJSXChild = false;
+        state.inJSXTag = false;
 
         expect('{');
         expect('...');
 
         expression = parseAssignmentExpression();
 
-        state.inXJSChild = origInXJSChild;
-        state.inXJSTag = origInXJSTag;
+        state.inJSXChild = origInJSXChild;
+        state.inJSXTag = origInJSXTag;
 
         expect('}');
 
-        return markerApply(marker, delegate.createXJSSpreadAttribute(expression));
+        return markerApply(marker, delegate.createJSXSpreadAttribute(expression));
     }
 
-    function parseXJSAttribute() {
+    function parseJSXAttribute() {
         var name, marker;
 
         if (match('{')) {
-            return parseXJSSpreadAttribute();
+            return parseJSXSpreadAttribute();
         }
 
         marker = markerCreate();
 
-        name = parseXJSAttributeName();
+        name = parseJSXAttributeName();
 
         // HTML empty attribute
         if (match('=')) {
             lex();
-            return markerApply(marker, delegate.createXJSAttribute(name, parseXJSAttributeValue()));
+            return markerApply(marker, delegate.createJSXAttribute(name, parseJSXAttributeValue()));
         }
 
-        return markerApply(marker, delegate.createXJSAttribute(name));
+        return markerApply(marker, delegate.createJSXAttribute(name));
     }
 
-    function parseXJSChild() {
+    function parseJSXChild() {
         var token, marker;
         if (match('{')) {
-            token = parseXJSExpressionContainer();
-        } else if (lookahead.type === Token.XJSText) {
+            token = parseJSXExpressionContainer();
+        } else if (lookahead.type === Token.JSXText) {
             marker = markerCreatePreserveWhitespace();
             token = markerApply(marker, delegate.createLiteral(lex()));
         } else if (match('<')) {
-            token = parseXJSElement();
+            token = parseJSXElement();
         } else {
             throwUnexpected(lookahead);
         }
         return token;
     }
 
-    function parseXJSClosingElement() {
-        var name, origInXJSChild, origInXJSTag, marker = markerCreate();
-        origInXJSChild = state.inXJSChild;
-        origInXJSTag = state.inXJSTag;
-        state.inXJSChild = false;
-        state.inXJSTag = true;
+    function parseJSXClosingElement() {
+        var name, origInJSXChild, origInJSXTag, marker = markerCreate();
+        origInJSXChild = state.inJSXChild;
+        origInJSXTag = state.inJSXTag;
+        state.inJSXChild = false;
+        state.inJSXTag = true;
         expect('<');
         expect('/');
-        name = parseXJSElementName();
+        name = parseJSXElementName();
         // Because advance() (called by lex() called by expect()) expects there
         // to be a valid token after >, it needs to know whether to look for a
-        // standard JS token or an XJS text node
-        state.inXJSChild = origInXJSChild;
-        state.inXJSTag = origInXJSTag;
+        // standard JS token or an JSX text node
+        state.inJSXChild = origInJSXChild;
+        state.inJSXTag = origInJSXTag;
         expect('>');
-        return markerApply(marker, delegate.createXJSClosingElement(name));
+        return markerApply(marker, delegate.createJSXClosingElement(name));
     }
 
-    function parseXJSOpeningElement() {
-        var name, attribute, attributes = [], selfClosing = false, origInXJSChild, origInXJSTag, marker = markerCreate();
+    function parseJSXOpeningElement() {
+        var name, attributes = [], selfClosing = false, origInJSXChild, origInJSXTag, marker = markerCreate();
 
-        origInXJSChild = state.inXJSChild;
-        origInXJSTag = state.inXJSTag;
-        state.inXJSChild = false;
-        state.inXJSTag = true;
+        origInJSXChild = state.inJSXChild;
+        origInJSXTag = state.inJSXTag;
+        state.inJSXChild = false;
+        state.inJSXTag = true;
 
         expect('<');
 
-        name = parseXJSElementName();
+        name = parseJSXElementName();
 
         while (index < length &&
                 lookahead.value !== '/' &&
                 lookahead.value !== '>') {
-            attributes.push(parseXJSAttribute());
+            attributes.push(parseJSXAttribute());
         }
 
-        state.inXJSTag = origInXJSTag;
+        state.inJSXTag = origInJSXTag;
 
         if (lookahead.value === '/') {
             expect('/');
             // Because advance() (called by lex() called by expect()) expects
             // there to be a valid token after >, it needs to know whether to
-            // look for a standard JS token or an XJS text node
-            state.inXJSChild = origInXJSChild;
+            // look for a standard JS token or an JSX text node
+            state.inJSXChild = origInJSXChild;
             expect('>');
             selfClosing = true;
         } else {
-            state.inXJSChild = true;
+            state.inJSXChild = true;
             expect('>');
         }
-        return markerApply(marker, delegate.createXJSOpeningElement(name, attributes, selfClosing));
+        return markerApply(marker, delegate.createJSXOpeningElement(name, attributes, selfClosing));
     }
 
-    function parseXJSElement() {
-        var openingElement, closingElement = null, children = [], origInXJSChild, origInXJSTag, marker = markerCreate();
+    function parseJSXElement() {
+        var openingElement, closingElement = null, children = [], origInJSXChild, origInJSXTag, marker = markerCreate();
 
-        origInXJSChild = state.inXJSChild;
-        origInXJSTag = state.inXJSTag;
-        openingElement = parseXJSOpeningElement();
+        origInJSXChild = state.inJSXChild;
+        origInJSXTag = state.inJSXTag;
+        openingElement = parseJSXOpeningElement();
 
         if (!openingElement.selfClosing) {
             while (index < length) {
-                state.inXJSChild = false; // Call lookahead2() with inXJSChild = false because </ should not be considered in the child
+                state.inJSXChild = false; // Call lookahead2() with inJSXChild = false because </ should not be considered in the child
                 if (lookahead.value === '<' && lookahead2().value === '/') {
                     break;
                 }
-                state.inXJSChild = true;
-                children.push(parseXJSChild());
+                state.inJSXChild = true;
+                children.push(parseJSXChild());
             }
-            state.inXJSChild = origInXJSChild;
-            state.inXJSTag = origInXJSTag;
-            closingElement = parseXJSClosingElement();
-            if (getQualifiedXJSName(closingElement.name) !== getQualifiedXJSName(openingElement.name)) {
-                throwError({}, Messages.ExpectedXJSClosingTag, getQualifiedXJSName(openingElement.name));
+            state.inJSXChild = origInJSXChild;
+            state.inJSXTag = origInJSXTag;
+            closingElement = parseJSXClosingElement();
+            if (getQualifiedJSXName(closingElement.name) !== getQualifiedJSXName(openingElement.name)) {
+                throwError({}, Messages.ExpectedJSXClosingTag, getQualifiedJSXName(openingElement.name));
             }
         }
 
@@ -9538,15 +9436,15 @@ parseYieldExpression: true, parseAwaitExpression: true
         //     var x = <div>one</div><div>two</div>;
         //
         // the default error message is a bit incomprehensible. Since it's
-        // rarely (never?) useful to write a less-than sign after an XJS
+        // rarely (never?) useful to write a less-than sign after an JSX
         // element, we disallow it here in the parser in order to provide a
         // better error message. (In the rare case that the less-than operator
         // was intended, the left tag can be wrapped in parentheses.)
-        if (!origInXJSChild && match('<')) {
-            throwError(lookahead, Messages.AdjacentXJSElements);
+        if (!origInJSXChild && match('<')) {
+            throwError(lookahead, Messages.AdjacentJSXElements);
         }
 
-        return markerApply(marker, delegate.createXJSElement(openingElement, closingElement, children));
+        return markerApply(marker, delegate.createJSXElement(openingElement, closingElement, children));
     }
 
     function parseTypeAlias() {
@@ -9609,8 +9507,7 @@ parseYieldExpression: true, parseAwaitExpression: true
     }
 
     function parseInterface() {
-        var body, bodyMarker, extended = [], id, marker = markerCreate(),
-            typeParameters = null, previousStrict;
+        var marker = markerCreate();
 
         if (strict) {
             expectKeyword('interface');
@@ -9728,14 +9625,13 @@ parseYieldExpression: true, parseAwaitExpression: true
     }
 
     function collectToken() {
-        var start, loc, token, range, value, entry;
+        var loc, token, range, value, entry;
 
         /* istanbul ignore else */
-        if (!state.inXJSChild) {
+        if (!state.inJSXChild) {
             skipComment();
         }
 
-        start = index;
         loc = {
             start: {
                 line: lineNumber,
@@ -9841,11 +9737,6 @@ parseYieldExpression: true, parseAwaitExpression: true
     }
 
     function patch() {
-        if (extra.comments) {
-            extra.skipComment = skipComment;
-            skipComment = scanComment;
-        }
-
         if (typeof extra.tokens !== 'undefined') {
             extra.advance = advance;
             extra.scanRegExp = scanRegExp;
@@ -9856,10 +9747,6 @@ parseYieldExpression: true, parseAwaitExpression: true
     }
 
     function unpatch() {
-        if (typeof extra.skipComment === 'function') {
-            skipComment = extra.skipComment;
-        }
-
         if (typeof extra.scanRegExp === 'function') {
             advance = extra.advance;
             scanRegExp = extra.scanRegExp;
@@ -10003,8 +9890,8 @@ parseYieldExpression: true, parseAwaitExpression: true
             inFunctionBody: false,
             inIteration: false,
             inSwitch: false,
-            inXJSChild: false,
-            inXJSTag: false,
+            inJSXChild: false,
+            inJSXTag: false,
             inType: false,
             lastCommentStart: -1,
             yieldAllowed: false,
@@ -10069,7 +9956,7 @@ parseYieldExpression: true, parseAwaitExpression: true
     }
 
     // Sync with *.json manifests.
-    exports.version = '12001.1.0-dev-harmony-fb';
+    exports.version = '13001.1.0-dev-harmony-fb';
 
     exports.tokenize = tokenize;
 
@@ -15125,8 +15012,33 @@ RESERVED_WORDS.forEach(function(k) {
     reservedWordsMap[k] = true;
 });
 
+/**
+ * This list should not grow as new reserved words are introdued. This list is
+ * of words that need to be quoted because ES3-ish browsers do not allow their
+ * use as identifier names.
+ */
+var ES3_FUTURE_RESERVED_WORDS = [
+  'enum', 'implements', 'package', 'protected', 'static', 'interface',
+  'private', 'public'
+];
+
+var ES3_RESERVED_WORDS = [].concat(
+  KEYWORDS,
+  ES3_FUTURE_RESERVED_WORDS,
+  LITERALS
+);
+
+var es3ReservedWordsMap = Object.create(null);
+ES3_RESERVED_WORDS.forEach(function(k) {
+    es3ReservedWordsMap[k] = true;
+});
+
 exports.isReservedWord = function(word) {
   return !!reservedWordsMap[word];
+};
+
+exports.isES3ReservedWord = function(word) {
+  return !!es3ReservedWordsMap[word];
 };
 
 },{}],35:[function(_dereq_,module,exports){
@@ -15174,7 +15086,7 @@ visitProperty.test = function(node) {
     !node.method &&
     !node.shorthand &&
     !node.computed &&
-    reserverdWordsHelper.isReservedWord(node.key.name);
+    reserverdWordsHelper.isES3ReservedWord(node.key.name);
 };
 
 function visitMemberExpression(traverse, node, path, state) {
@@ -15191,7 +15103,7 @@ function visitMemberExpression(traverse, node, path, state) {
 visitMemberExpression.test = function(node) {
   return node.type === Syntax.MemberExpression &&
     node.property.type === Syntax.Identifier &&
-    reserverdWordsHelper.isReservedWord(node.property.name);
+    reserverdWordsHelper.isES3ReservedWord(node.property.name);
 };
 
 exports.visitorList = [
@@ -15229,6 +15141,10 @@ visitTypeAlias.test = function(node, path, state) {
 };
 
 function visitTypeCast(traverse, node, path, state) {
+  path.unshift(node);
+  traverse(node.expression, path, state);
+  path.shift();
+
   utils.catchup(node.typeAnnotation.range[0], state);
   utils.catchupWhiteOut(node.typeAnnotation.range[1], state);
   return false;
@@ -15380,16 +15296,129 @@ exports.visitorList = [
  */
 /*global exports:true*/
 'use strict';
+var Syntax = _dereq_('jstransform').Syntax;
+var utils = _dereq_('jstransform/src/utils');
+
+function renderJSXLiteral(object, isLast, state, start, end) {
+  var lines = object.value.split(/\r\n|\n|\r/);
+
+  if (start) {
+    utils.append(start, state);
+  }
+
+  var lastNonEmptyLine = 0;
+
+  lines.forEach(function(line, index) {
+    if (line.match(/[^ \t]/)) {
+      lastNonEmptyLine = index;
+    }
+  });
+
+  lines.forEach(function(line, index) {
+    var isFirstLine = index === 0;
+    var isLastLine = index === lines.length - 1;
+    var isLastNonEmptyLine = index === lastNonEmptyLine;
+
+    // replace rendered whitespace tabs with spaces
+    var trimmedLine = line.replace(/\t/g, ' ');
+
+    // trim whitespace touching a newline
+    if (!isFirstLine) {
+      trimmedLine = trimmedLine.replace(/^[ ]+/, '');
+    }
+    if (!isLastLine) {
+      trimmedLine = trimmedLine.replace(/[ ]+$/, '');
+    }
+
+    if (!isFirstLine) {
+      utils.append(line.match(/^[ \t]*/)[0], state);
+    }
+
+    if (trimmedLine || isLastNonEmptyLine) {
+      utils.append(
+        JSON.stringify(trimmedLine) +
+        (!isLastNonEmptyLine ? ' + \' \' +' : ''),
+        state);
+
+      if (isLastNonEmptyLine) {
+        if (end) {
+          utils.append(end, state);
+        }
+        if (!isLast) {
+          utils.append(', ', state);
+        }
+      }
+
+      // only restore tail whitespace if line had literals
+      if (trimmedLine && !isLastLine) {
+        utils.append(line.match(/[ \t]*$/)[0], state);
+      }
+    }
+
+    if (!isLastLine) {
+      utils.append('\n', state);
+    }
+  });
+
+  utils.move(object.range[1], state);
+}
+
+function renderJSXExpressionContainer(traverse, object, isLast, path, state) {
+  // Plus 1 to skip `{`.
+  utils.move(object.range[0] + 1, state);
+  utils.catchup(object.expression.range[0], state);
+  traverse(object.expression, path, state);
+
+  if (!isLast && object.expression.type !== Syntax.JSXEmptyExpression) {
+    // If we need to append a comma, make sure to do so after the expression.
+    utils.catchup(object.expression.range[1], state, trimLeft);
+    utils.append(', ', state);
+  }
+
+  // Minus 1 to skip `}`.
+  utils.catchup(object.range[1] - 1, state, trimLeft);
+  utils.move(object.range[1], state);
+  return false;
+}
+
+function quoteAttrName(attr) {
+  // Quote invalid JS identifiers.
+  if (!/^[a-z_$][a-z\d_$]*$/i.test(attr)) {
+    return '"' + attr + '"';
+  }
+  return attr;
+}
+
+function trimLeft(value) {
+  return value.replace(/^[ ]+/, '');
+}
+
+exports.renderJSXExpressionContainer = renderJSXExpressionContainer;
+exports.renderJSXLiteral = renderJSXLiteral;
+exports.quoteAttrName = quoteAttrName;
+exports.trimLeft = trimLeft;
+
+},{"jstransform":22,"jstransform/src/utils":23}],38:[function(_dereq_,module,exports){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+/*global exports:true*/
+'use strict';
 
 var Syntax = _dereq_('jstransform').Syntax;
 var utils = _dereq_('jstransform/src/utils');
 
-var renderXJSExpressionContainer =
-  _dereq_('./xjs').renderXJSExpressionContainer;
-var renderXJSLiteral = _dereq_('./xjs').renderXJSLiteral;
-var quoteAttrName = _dereq_('./xjs').quoteAttrName;
+var renderJSXExpressionContainer =
+  _dereq_('./jsx').renderJSXExpressionContainer;
+var renderJSXLiteral = _dereq_('./jsx').renderJSXLiteral;
+var quoteAttrName = _dereq_('./jsx').quoteAttrName;
 
-var trimLeft = _dereq_('./xjs').trimLeft;
+var trimLeft = _dereq_('./jsx').trimLeft;
 
 /**
  * Customized desugar processor for React JSX. Currently:
@@ -15422,20 +15451,20 @@ function visitReactTag(traverse, object, path, state) {
 
   utils.catchup(openingElement.range[0], state, trimLeft);
 
-  if (nameObject.type === Syntax.XJSNamespacedName && nameObject.namespace) {
+  if (nameObject.type === Syntax.JSXNamespacedName && nameObject.namespace) {
     throw new Error('Namespace tags are not supported. ReactJSX is not XML.');
   }
 
   // We assume that the React runtime is already in scope
   utils.append('React.createElement(', state);
 
-  if (nameObject.type === Syntax.XJSIdentifier && isTagName(nameObject.name)) {
+  if (nameObject.type === Syntax.JSXIdentifier && isTagName(nameObject.name)) {
     utils.append('"' + nameObject.name + '"', state);
     utils.move(nameObject.range[1], state);
   } else {
     // Use utils.catchup in this case so we can easily handle
-    // XJSMemberExpressions which look like Foo.Bar.Baz. This also handles
-    // XJSIdentifiers that aren't fallback tags.
+    // JSXMemberExpressions which look like Foo.Bar.Baz. This also handles
+    // JSXIdentifiers that aren't fallback tags.
     utils.move(nameObject.range[0], state);
     utils.catchup(nameObject.range[1], state);
   }
@@ -15445,7 +15474,7 @@ function visitReactTag(traverse, object, path, state) {
   var hasAttributes = attributesObject.length;
 
   var hasAtLeastOneSpreadProperty = attributesObject.some(function(attr) {
-    return attr.type === Syntax.XJSSpreadAttribute;
+    return attr.type === Syntax.JSXSpreadAttribute;
   });
 
   // if we don't have any attributes, pass in null
@@ -15464,7 +15493,7 @@ function visitReactTag(traverse, object, path, state) {
   attributesObject.forEach(function(attr, index) {
     var isLast = index === attributesObject.length - 1;
 
-    if (attr.type === Syntax.XJSSpreadAttribute) {
+    if (attr.type === Syntax.JSXSpreadAttribute) {
       // Close the previous object or initial object
       if (!previousWasSpread) {
         utils.append('}, ', state);
@@ -15497,7 +15526,7 @@ function visitReactTag(traverse, object, path, state) {
 
     // If the next attribute is a spread, we're effective last in this object
     if (!isLast) {
-      isLast = attributesObject[index + 1].type === Syntax.XJSSpreadAttribute;
+      isLast = attributesObject[index + 1].type === Syntax.JSXSpreadAttribute;
     }
 
     if (attr.name.namespace) {
@@ -15526,9 +15555,9 @@ function visitReactTag(traverse, object, path, state) {
       // Use catchupNewlines to skip over the '=' in the attribute
       utils.catchupNewlines(attr.value.range[0], state);
       if (attr.value.type === Syntax.Literal) {
-        renderXJSLiteral(attr.value, isLast, state);
+        renderJSXLiteral(attr.value, isLast, state);
       } else {
-        renderXJSExpressionContainer(traverse, attr.value, isLast, path, state);
+        renderJSXExpressionContainer(traverse, attr.value, isLast, path, state);
       }
     }
 
@@ -15561,8 +15590,8 @@ function visitReactTag(traverse, object, path, state) {
     var lastRenderableIndex;
 
     childrenToRender.forEach(function(child, index) {
-      if (child.type !== Syntax.XJSExpressionContainer ||
-          child.expression.type !== Syntax.XJSEmptyExpression) {
+      if (child.type !== Syntax.JSXExpressionContainer ||
+          child.expression.type !== Syntax.JSXEmptyExpression) {
         lastRenderableIndex = index;
       }
     });
@@ -15577,9 +15606,9 @@ function visitReactTag(traverse, object, path, state) {
       var isLast = index >= lastRenderableIndex;
 
       if (child.type === Syntax.Literal) {
-        renderXJSLiteral(child, isLast, state);
-      } else if (child.type === Syntax.XJSExpressionContainer) {
-        renderXJSExpressionContainer(traverse, child, isLast, path, state);
+        renderJSXLiteral(child, isLast, state);
+      } else if (child.type === Syntax.JSXExpressionContainer) {
+        renderJSXExpressionContainer(traverse, child, isLast, path, state);
       } else {
         traverse(child, path, state);
         if (!isLast) {
@@ -15606,14 +15635,14 @@ function visitReactTag(traverse, object, path, state) {
 }
 
 visitReactTag.test = function(object, path, state) {
-  return object.type === Syntax.XJSElement;
+  return object.type === Syntax.JSXElement;
 };
 
 exports.visitorList = [
   visitReactTag
 ];
 
-},{"./xjs":39,"jstransform":22,"jstransform/src/utils":23}],38:[function(_dereq_,module,exports){
+},{"./jsx":37,"jstransform":22,"jstransform/src/utils":23}],39:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -15707,119 +15736,6 @@ visitReactDisplayName.test = function(object, path, state) {
 exports.visitorList = [
   visitReactDisplayName
 ];
-
-},{"jstransform":22,"jstransform/src/utils":23}],39:[function(_dereq_,module,exports){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
-/*global exports:true*/
-'use strict';
-var Syntax = _dereq_('jstransform').Syntax;
-var utils = _dereq_('jstransform/src/utils');
-
-function renderXJSLiteral(object, isLast, state, start, end) {
-  var lines = object.value.split(/\r\n|\n|\r/);
-
-  if (start) {
-    utils.append(start, state);
-  }
-
-  var lastNonEmptyLine = 0;
-
-  lines.forEach(function(line, index) {
-    if (line.match(/[^ \t]/)) {
-      lastNonEmptyLine = index;
-    }
-  });
-
-  lines.forEach(function(line, index) {
-    var isFirstLine = index === 0;
-    var isLastLine = index === lines.length - 1;
-    var isLastNonEmptyLine = index === lastNonEmptyLine;
-
-    // replace rendered whitespace tabs with spaces
-    var trimmedLine = line.replace(/\t/g, ' ');
-
-    // trim whitespace touching a newline
-    if (!isFirstLine) {
-      trimmedLine = trimmedLine.replace(/^[ ]+/, '');
-    }
-    if (!isLastLine) {
-      trimmedLine = trimmedLine.replace(/[ ]+$/, '');
-    }
-
-    if (!isFirstLine) {
-      utils.append(line.match(/^[ \t]*/)[0], state);
-    }
-
-    if (trimmedLine || isLastNonEmptyLine) {
-      utils.append(
-        JSON.stringify(trimmedLine) +
-        (!isLastNonEmptyLine ? ' + \' \' +' : ''),
-        state);
-
-      if (isLastNonEmptyLine) {
-        if (end) {
-          utils.append(end, state);
-        }
-        if (!isLast) {
-          utils.append(', ', state);
-        }
-      }
-
-      // only restore tail whitespace if line had literals
-      if (trimmedLine && !isLastLine) {
-        utils.append(line.match(/[ \t]*$/)[0], state);
-      }
-    }
-
-    if (!isLastLine) {
-      utils.append('\n', state);
-    }
-  });
-
-  utils.move(object.range[1], state);
-}
-
-function renderXJSExpressionContainer(traverse, object, isLast, path, state) {
-  // Plus 1 to skip `{`.
-  utils.move(object.range[0] + 1, state);
-  utils.catchup(object.expression.range[0], state);
-  traverse(object.expression, path, state);
-
-  if (!isLast && object.expression.type !== Syntax.XJSEmptyExpression) {
-    // If we need to append a comma, make sure to do so after the expression.
-    utils.catchup(object.expression.range[1], state, trimLeft);
-    utils.append(', ', state);
-  }
-
-  // Minus 1 to skip `}`.
-  utils.catchup(object.range[1] - 1, state, trimLeft);
-  utils.move(object.range[1], state);
-  return false;
-}
-
-function quoteAttrName(attr) {
-  // Quote invalid JS identifiers.
-  if (!/^[a-z_$][a-z\d_$]*$/i.test(attr)) {
-    return '"' + attr + '"';
-  }
-  return attr;
-}
-
-function trimLeft(value) {
-  return value.replace(/^[ ]+/, '');
-}
-
-exports.renderXJSExpressionContainer = renderXJSExpressionContainer;
-exports.renderXJSLiteral = renderXJSLiteral;
-exports.quoteAttrName = quoteAttrName;
-exports.trimLeft = trimLeft;
 
 },{"jstransform":22,"jstransform/src/utils":23}],40:[function(_dereq_,module,exports){
 /*global exports:true*/
@@ -15948,7 +15864,7 @@ exports.getVisitorsBySet = getVisitorsBySet;
 exports.getAllVisitors = getAllVisitors;
 exports.transformVisitors = transformVisitors;
 
-},{"./transforms/react":37,"./transforms/reactDisplayName":38,"jstransform/visitors/es6-arrow-function-visitors":24,"jstransform/visitors/es6-call-spread-visitors":25,"jstransform/visitors/es6-class-visitors":26,"jstransform/visitors/es6-destructuring-visitors":27,"jstransform/visitors/es6-object-concise-method-visitors":28,"jstransform/visitors/es6-object-short-notation-visitors":29,"jstransform/visitors/es6-rest-param-visitors":30,"jstransform/visitors/es6-template-visitors":31,"jstransform/visitors/es7-spread-property-visitors":33,"jstransform/visitors/reserved-words-visitors":35}],41:[function(_dereq_,module,exports){
+},{"./transforms/react":38,"./transforms/reactDisplayName":39,"jstransform/visitors/es6-arrow-function-visitors":24,"jstransform/visitors/es6-call-spread-visitors":25,"jstransform/visitors/es6-class-visitors":26,"jstransform/visitors/es6-destructuring-visitors":27,"jstransform/visitors/es6-object-concise-method-visitors":28,"jstransform/visitors/es6-object-short-notation-visitors":29,"jstransform/visitors/es6-rest-param-visitors":30,"jstransform/visitors/es6-template-visitors":31,"jstransform/visitors/es7-spread-property-visitors":33,"jstransform/visitors/reserved-words-visitors":35}],41:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.

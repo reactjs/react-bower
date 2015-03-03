@@ -1,5 +1,5 @@
 /**
- * React v0.13.0-rc1
+ * React v0.13.0-rc2
  */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.React = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /**
@@ -43,10 +43,12 @@ ReactDefaultInjection.inject();
 
 var createElement = ReactElement.createElement;
 var createFactory = ReactElement.createFactory;
+var cloneElement = ReactElement.cloneElement;
 
 if ("production" !== "development") {
   createElement = ReactElementValidator.createElement;
   createFactory = ReactElementValidator.createFactory;
+  cloneElement = ReactElementValidator.cloneElement;
 }
 
 var render = ReactPerf.measure('React', 'render', ReactMount.render);
@@ -66,6 +68,7 @@ var React = {
   },
   createClass: ReactClass.createClass,
   createElement: createElement,
+  cloneElement: cloneElement,
   createFactory: createFactory,
   createMixin: function(mixin) {
     // Currently a noop. Will be used to validate and trace mixins.
@@ -144,7 +147,7 @@ if ("production" !== "development") {
   }
 }
 
-React.version = '0.13.0-rc1';
+React.version = '0.13.0-rc2';
 
 module.exports = React;
 
@@ -6603,14 +6606,16 @@ var ReactCompositeComponentMixin = {
             // Preface gives us something to blacklist in warning module
             ("production" !== "development" ? warning(
               false,
-              'Failed Composite propType: %s',
-              error.message + addendum
+              'Failed Composite propType: %s%s',
+              error.message,
+              addendum
             ) : null);
           } else {
             ("production" !== "development" ? warning(
               false,
-              'Failed Context Types: %s',
-              error.message + addendum
+              'Failed Context Types: %s%s',
+              error.message,
+              addendum
             ) : null);
           }
         }
@@ -9987,6 +9992,60 @@ ReactElement.cloneAndReplaceProps = function(oldElement, newProps) {
   return newElement;
 };
 
+ReactElement.cloneElement = function(element, config, children) {
+  var propName;
+
+  // Original props are copied
+  var props = assign({}, element.props);
+
+  // Reserved names are extracted
+  var key = element.key;
+  var ref = element.ref;
+
+  // Owner will be preserved, unless ref is overridden
+  var owner = element._owner;
+
+  if (config != null) {
+    if (config.ref !== undefined) {
+      // Silently steal the ref from the parent.
+      ref = config.ref;
+      owner = ReactCurrentOwner.current;
+    }
+    if (config.key !== undefined) {
+      key = '' + config.key;
+    }
+    // Remaining properties override existing props
+    for (propName in config) {
+      if (config.hasOwnProperty(propName) &&
+          !RESERVED_PROPS.hasOwnProperty(propName)) {
+        props[propName] = config[propName];
+      }
+    }
+  }
+
+  // Children can be more than one argument, and those are transferred onto
+  // the newly allocated props object.
+  var childrenLength = arguments.length - 2;
+  if (childrenLength === 1) {
+    props.children = children;
+  } else if (childrenLength > 1) {
+    var childArray = Array(childrenLength);
+    for (var i = 0; i < childrenLength; i++) {
+      childArray[i] = arguments[i + 2];
+    }
+    props.children = childArray;
+  }
+
+  return new ReactElement(
+    element.type,
+    key,
+    ref,
+    owner,
+    element._context,
+    props
+  );
+};
+
 /**
  * @param {?object} object
  * @return {boolean} True if `object` is a valid component.
@@ -10145,7 +10204,8 @@ function validatePropertyKey(name, element, parentType) {
  */
 function warnAndMonitorForKeyUse(message, element, parentType) {
   var ownerName = getCurrentOwnerDisplayName();
-  var parentName = parentType.displayName || parentType.name;
+  var parentName = typeof parentType === 'string' ?
+    parentType : parentType.displayName || parentType.name;
 
   var useName = ownerName || parentName;
   var memoizer = ownerHasKeyUseWarning[message] || (
@@ -10156,24 +10216,30 @@ function warnAndMonitorForKeyUse(message, element, parentType) {
   }
   memoizer[useName] = true;
 
-  message += ownerName ?
-    (" Check the render method of " + ownerName + ".") :
-    (" Check the React.render call using <" + parentName + ">.");
+  var parentOrOwnerAddendum =
+    ownerName ? (" Check the render method of " + ownerName + ".") :
+    parentName ? (" Check the React.render call using <" + parentName + ">.") :
+    '';
 
   // Usually the current owner is the offender, but if it accepts children as a
   // property, it may be the creator of the child that's responsible for
   // assigning it a key.
+  var childOwnerAddendum = '';
   if (element &&
       element._owner &&
       element._owner !== ReactCurrentOwner.current) {
     // Name of the component that originally created this child.
     var childOwnerName = getName(element._owner);
 
-    message += (" It was passed a child from " + childOwnerName + ".");
+    childOwnerAddendum = (" It was passed a child from " + childOwnerName + ".");
   }
 
-  message += ' See http://fb.me/react-warning-keys for more information.';
-  ("production" !== "development" ? warning(false, message) : null);
+  ("production" !== "development" ? warning(
+    false,
+    message + '%s%s See http://fb.me/react-warning-keys for more information.',
+    parentOrOwnerAddendum,
+    childOwnerAddendum
+  ) : null);
 }
 
 /**
@@ -10257,7 +10323,7 @@ function checkPropTypes(componentName, propTypes, props, location) {
         loggedTypeFailures[error.message] = true;
 
         var addendum = getDeclarationErrorAddendum(this);
-        ("production" !== "development" ? warning(false, 'Failed propType: ' + error.message + addendum) : null);
+        ("production" !== "development" ? warning(false, 'Failed propType: %s%s', error.message, addendum) : null);
       }
     }
   }
@@ -10347,6 +10413,42 @@ function checkAndWarnForMutatedProps(element) {
   }
 }
 
+/**
+ * Given an element, validate that its props follow the propTypes definition,
+ * provided by the type.
+ *
+ * @param {ReactElement} element
+ */
+function validatePropTypes(element) {
+  if (element.type == null) {
+    // This has already warned. Don't throw.
+    return;
+  }
+  // Extract the component class from the element. Converts string types
+  // to a composite class which may have propTypes.
+  // TODO: Validating a string's propTypes is not decoupled from the
+  // rendering target which is problematic.
+  var componentClass = ReactNativeComponent.getComponentClassForElement(
+    element
+  );
+  var name = componentClass.displayName || componentClass.name;
+  if (componentClass.propTypes) {
+    checkPropTypes(
+      name,
+      componentClass.propTypes,
+      element.props,
+      ReactPropTypeLocations.prop
+    );
+  }
+  if (typeof componentClass.getDefaultProps === 'function') {
+    ("production" !== "development" ? warning(
+      componentClass.getDefaultProps.isReactClassApproved,
+      'getDefaultProps is only used on classic React.createClass ' +
+      'definitions. Use a static property named `defaultProps` instead.'
+    ) : null);
+  }
+}
+
 var ReactElementValidator = {
 
   checkAndWarnForMutatedProps: checkAndWarnForMutatedProps,
@@ -10373,33 +10475,7 @@ var ReactElementValidator = {
       validateChildKeys(arguments[i], type);
     }
 
-    if (type) {
-      // Extract the component class from the element. Converts string types
-      // to a composite class which may have propTypes.
-      // TODO: Validating a string's propTypes is not decoupled from the
-      // rendering target which is problematic.
-      var componentClass = ReactNativeComponent.getComponentClassForElement(
-        element
-      );
-      var name = componentClass.displayName || componentClass.name;
-      if ("production" !== "development") {
-        if (componentClass.propTypes) {
-          checkPropTypes(
-            name,
-            componentClass.propTypes,
-            element.props,
-            ReactPropTypeLocations.prop
-          );
-        }
-      }
-      if (typeof componentClass.getDefaultProps === 'function') {
-        ("production" !== "development" ? warning(
-          componentClass.getDefaultProps.isReactClassApproved,
-          'getDefaultProps is only used on classic React.createClass ' +
-          'definitions. Use a static property named `defaultProps` instead.'
-        ) : null);
-      }
-    }
+    validatePropTypes(element);
 
     return element;
   },
@@ -10439,6 +10515,15 @@ var ReactElementValidator = {
 
 
     return validatedFactory;
+  },
+
+  cloneElement: function(element, props, children) {
+    var newElement = ReactElement.cloneElement.apply(this, arguments);
+    for (var i = 2; i < arguments.length; i++) {
+      validateChildKeys(arguments[i], newElement.type);
+    }
+    validatePropTypes(newElement);
+    return newElement;
   }
 
 };
@@ -10947,7 +11032,8 @@ var ReactFragment = {
           ("production" !== "development" ? warning(
             didWarnForFragment(fragment),
             'Any use of a keyed object should be wrapped in ' +
-            'React.addons.createFragment(object) before passed as a child.'
+            'React.addons.createFragment(object) before being passed as a ' +
+            'child.'
           ) : null);
           return fragment;
         }
@@ -13364,6 +13450,7 @@ module.exports = ReactPropTypeLocations;
 'use strict';
 
 var ReactElement = _dereq_(57);
+var ReactFragment = _dereq_(63);
 var ReactPropTypeLocationNames = _dereq_(76);
 
 var emptyFunction = _dereq_(114);
@@ -13653,6 +13740,7 @@ function isNode(propValue) {
       if (ReactElement.isValidElement(propValue)) {
         return true;
       }
+      propValue = ReactFragment.extractIfFragment(propValue);
       for (var k in propValue) {
         if (!isNode(propValue[k])) {
           return false;
@@ -13695,7 +13783,7 @@ function getPreciseType(propValue) {
 
 module.exports = ReactPropTypes;
 
-},{"114":114,"57":57,"76":76}],79:[function(_dereq_,module,exports){
+},{"114":114,"57":57,"63":63,"76":76}],79:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -14016,7 +14104,6 @@ var ReactReconciler = {
     }
 
     var refsChanged = ReactRef.shouldUpdateRefs(
-      this,
       prevElement,
       nextElement
     );
@@ -14093,7 +14180,7 @@ ReactRef.attachRefs = function(instance, element) {
   }
 };
 
-ReactRef.shouldUpdateRefs = function(instance, prevElement, nextElement) {
+ReactRef.shouldUpdateRefs = function(prevElement, nextElement) {
   // If either the owner or a `ref` has changed, make sure the newest owner
   // has stored a reference to `this`, and the previous owner (if different)
   // has forgotten the reference to `this`. We use the element instead
