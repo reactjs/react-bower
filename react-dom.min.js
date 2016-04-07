@@ -1,5 +1,5 @@
 /**
- * ReactDOM v15.0.0-rc.2
+ * ReactDOM v15.0.0
  *
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
