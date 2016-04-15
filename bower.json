@@ -1,5 +1,6 @@
 {
   "name": "react",
+  "version": "15.0.1",
   "main": ["react.js", "react-dom.js"],
   "ignore": []
 }
