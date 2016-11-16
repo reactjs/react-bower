@@ -1,5 +1,5 @@
  /**
-  * React v15.4.0-rc.3
+  * React v15.4.0
   */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.React = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 /**
@@ -321,8 +321,8 @@ ForEachBookKeeping.prototype.destructor = function () {
 PooledClass.addPoolingTo(ForEachBookKeeping, twoArgumentPooler);
 
 function forEachSingleChild(bookKeeping, child, name) {
-  var func = bookKeeping.func;
-  var context = bookKeeping.context;
+  var func = bookKeeping.func,
+      context = bookKeeping.context;
 
   func.call(context, child, bookKeeping.count++);
 }
@@ -374,10 +374,10 @@ MapBookKeeping.prototype.destructor = function () {
 PooledClass.addPoolingTo(MapBookKeeping, fourArgumentPooler);
 
 function mapSingleChildIntoContext(bookKeeping, child, childKey) {
-  var result = bookKeeping.result;
-  var keyPrefix = bookKeeping.keyPrefix;
-  var func = bookKeeping.func;
-  var context = bookKeeping.context;
+  var result = bookKeeping.result,
+      keyPrefix = bookKeeping.keyPrefix,
+      func = bookKeeping.func,
+      context = bookKeeping.context;
 
 
   var mappedChild = func.call(context, child, bookKeeping.count++);
@@ -1462,7 +1462,7 @@ function describeID(id) {
 var ReactComponentTreeHook = {
   onSetChildren: function (id, nextChildIDs) {
     var item = getItem(id);
-    invariant(item, 'Item must have been set');
+    !item ? "development" !== 'production' ? invariant(false, 'Item must have been set') : _prodInvariant('144') : void 0;
     item.childIDs = nextChildIDs;
 
     for (var i = 0; i < nextChildIDs.length; i++) {
@@ -1502,7 +1502,7 @@ var ReactComponentTreeHook = {
   },
   onMountComponent: function (id) {
     var item = getItem(id);
-    invariant(item, 'Item must have been set');
+    !item ? "development" !== 'production' ? invariant(false, 'Item must have been set') : _prodInvariant('144') : void 0;
     item.isMounted = true;
     var isRoot = item.parentID === 0;
     if (isRoot) {
@@ -3073,7 +3073,7 @@ module.exports = ReactUMDEntry;
 
 'use strict';
 
-module.exports = '15.4.0-rc.3';
+module.exports = '15.4.0';
 },{}],20:[function(_dereq_,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
